@@ -52,6 +52,19 @@ Every push to `main` runs the tests, builds and deploys to GitHub Pages.
 
 React, TypeScript, Vite, Tailwind CSS, MapLibre GL, OpenFreeMap, Phosphor icons. Data from OpenStreetMap through Nominatim, Photon, Overpass and OSRM. The JavaScript asked for in the paper (events, fetch, validation) is in plain `.js` files in [src/js](src/js).
 
+## Self-learning (beyond the task)
+
+- 3D globe that flattens into a street map (MapLibre globe projection)
+- Apple Human Interface Guidelines and Liquid Glass
+- Google Maps style navigation with live heading and route snapping
+- Voice search (Web Speech API)
+- Ranking repeated place names by distance
+- OSM opening hours to "Open · closes 23:30"
+- Photos and logos from Wikidata
+- Installable PWA with offline support
+- 64 Vitest tests and GitHub Actions CI/CD
+- Accessibility: shortcuts, screen readers, reduced motion
+
 ## Limitations
 
 - Most places on OSM have no opening hours yet
