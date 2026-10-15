@@ -161,7 +161,7 @@ export default function Landing({ route, reducedMotion, onExplore }: Props) {
               className="absolute inset-y-0 left-0 rounded-full bg-[#14161c]"
               initial={{ width: '8%' }}
               animate={reducedMotion ? { width: '55%' } : { width: ['8%', '55%', '96%'] }}
-              transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
+              transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
             />
           </div>
           <div className="mt-1.5 flex justify-between text-[10px] text-[#7a8090]">

@@ -18,6 +18,7 @@ import RouteCard from './components/RouteCard'
 import Sheet, { type Detent } from './components/Sheet'
 import Landing from './components/Landing'
 import Navigation from './components/Navigation'
+import Splash from './components/Splash'
 import { OfflineBanner, SearchAreaButton, Toasts } from './components/Overlays'
 import HomeView from './components/views/HomeView'
 import ResultsView from './components/views/ResultsView'
@@ -96,6 +97,30 @@ export default function App() {
   const [searchFocused, setSearchFocused] = useState(false)
   const [vh, setVh] = useState(() => window.innerHeight)
   const [navigating, setNavigating] = useState(false)
+  const [navFollow, setNavFollow] = useState(true)
+  // Loading screen: hide once the map has drawn its tiles (min ~1 s so it never flashes, max 9 s).
+  const [mapIdle, setMapIdle] = useState(false)
+  const [minTimePassed, setMinTimePassed] = useState(false)
+  const [splashTimedOut, setSplashTimedOut] = useState(false)
+  useEffect(() => {
+    const a = window.setTimeout(() => setMinTimePassed(true), 1100)
+    const b2 = window.setTimeout(() => setSplashTimedOut(true), 9000)
+    return () => {
+      window.clearTimeout(a)
+      window.clearTimeout(b2)
+    }
+  }, [])
+  const showSplash = !splashTimedOut && !(mapIdle && minTimePassed)
+  // Height of the floating top bar on phones, so the bottom sheet can stop just below it.
+  const headerRef = useRef<HTMLElement>(null)
+  const [headerH, setHeaderH] = useState(130)
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(() => setHeaderH(Math.round(el.getBoundingClientRect().bottom)))
+    ro.observe(el)
+    return () => ro.disconnect()
+  })
 
   const dark = b.settings.theme === 'dark' || (b.settings.theme === 'auto' && systemDark)
   const styleId = landing ? 'muted' : resolveStyle(b.settings.mapStyle, dark)
@@ -211,7 +236,9 @@ export default function App() {
   const showNav = NAV_VIEWS.includes(view.name)
   const showSheet = view.name !== 'home'
   const sheetBottom = showNav ? NAV_H : 0
-  const sheetHeight = !showSheet ? 0 : detent === 'peek' ? 132 : detent === 'half' ? vh * 0.48 : vh - sheetBottom - 96
+  const sheetTop = headerH + 10
+  const sheetFull = Math.max(200, vh - sheetBottom - sheetTop)
+  const sheetHeight = !showSheet ? 0 : detent === 'peek' ? 132 : detent === 'half' ? Math.min(sheetFull, vh * 0.48) : sheetFull
   const mobileBottom = sheetBottom + sheetHeight
 
   const padding = useMemo(() => {
@@ -235,7 +262,10 @@ export default function App() {
       case 'place':
         return <PlaceView b={b} id={view.id} />
       case 'directions':
-        return <DirectionsView b={b} id={view.id} onStart={() => setNavigating(true)} />
+        return <DirectionsView b={b} id={view.id} onStart={() => {
+              setNavFollow(true)
+              setNavigating(true)
+            }} />
       case 'report':
         return <ReportView b={b} id={view.id} />
       case 'saved':
@@ -382,12 +412,14 @@ export default function App() {
           if (!landing) b.onMapMoved(c, z, byUser)
         }}
         onReady={onReady}
+        onIdle={() => setMapIdle(true)}
+        onUserGesture={() => navigating && setNavFollow(false)}
         onLongPress={(lat, lon) => {
           if (!landing) void b.whatsHere(lat, lon)
         }}
       />
 
-      <AnimatePresence>{landing && <Landing key="landing" route={demoRoute} reducedMotion={reducedMotion} onExplore={explore} />}</AnimatePresence>
+      <AnimatePresence>{landing && !showSplash && <Landing key="landing" route={demoRoute} reducedMotion={reducedMotion} onExplore={explore} />}</AnimatePresence>
 
       {navigating && view.name === 'directions' && b.route && (
         <Navigation
@@ -398,6 +430,8 @@ export default function App() {
           units={b.settings.units}
           reducedMotion={reducedMotion}
           mapRef={mapRef}
+          following={navFollow}
+          onFollowChange={setNavFollow}
           onExit={() => {
             setNavigating(false)
             if (b.route) window.setTimeout(() => mapRef.current?.fitRoute(b.route!), 850)
@@ -437,7 +471,7 @@ export default function App() {
           </>
         ) : (
           <>
-            <header className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pt-[calc(env(safe-area-inset-top)+12px)]">
+            <header ref={headerRef} className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pt-[calc(env(safe-area-inset-top)+12px)]">
               <div className="pointer-events-auto">{top}</div>
               <div className="pointer-events-auto mt-2 flex justify-center">{topCenter}</div>
             </header>
@@ -448,7 +482,7 @@ export default function App() {
               {controls}
             </div>
             {showSheet && (
-              <Sheet detent={detent} onDetent={setDetent} bottom={sheetBottom} label="Search results and place details">
+              <Sheet detent={detent} onDetent={setDetent} bottom={sheetBottom} top={sheetTop} label="Search results and place details">
                 {animated}
               </Sheet>
             )}
@@ -459,6 +493,10 @@ export default function App() {
             )}
           </>
         ))}
+
+      <AnimatePresence>
+        {showSplash && <Splash key="splash" message={landing ? 'Loading the city in 3D…' : 'Loading the map…'} />}
+      </AnimatePresence>
 
       <Toasts toasts={b.toasts} onDismiss={b.dismissToast} reducedMotion={reducedMotion} />
     </div>

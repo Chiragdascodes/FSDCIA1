@@ -137,7 +137,7 @@ export const SIM_SPEED = { foot: 1.4 * 6, bike: 4.5 * 6, car: 9 * 6 }
 
 /** Camera per travel mode (Google-Maps-like: closer and flatter when walking, further when driving). */
 export const NAV_CAMERA = {
-  foot: { zoom: 18.3, pitch: 45 },
-  bike: { zoom: 17.4, pitch: 55 },
-  car: { zoom: 16.6, pitch: 62 },
+  foot: { zoom: 18.2, pitch: 60 },
+  bike: { zoom: 17.5, pitch: 65 },
+  car: { zoom: 16.8, pitch: 70 },
 }

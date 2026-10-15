@@ -31,6 +31,9 @@ interface Props {
   units: 'metric' | 'imperial'
   reducedMotion: boolean
   mapRef: RefObject<BeaconMapHandle | null>
+  /** Follow-mode is owned by the app so map gestures (drag/rotate/zoom) can pause it. */
+  following: boolean
+  onFollowChange(follow: boolean): void
   onExit(): void
 }
 
@@ -56,12 +59,11 @@ const MODE_LABEL = { foot: 'Walking', bike: 'Cycling', car: 'Driving' }
  *  - live GPS (watchPosition) is snapped onto the route when the user is on it;
  *  - otherwise a simulated trip plays along the route so it can be demoed anywhere.
  */
-export default function Navigation({ route, mode, destination, user, units, reducedMotion, mapRef, onExit }: Props) {
+export default function Navigation({ route, mode, destination, user, units, reducedMotion, mapRef, following, onFollowChange, onExit }: Props) {
   const idx = useMemo(() => buildRouteIndex(route.geometry.coordinates), [route])
   const live = useMemo(() => !!user && snapToRoute(idx, user).offRoute < 80, [idx]) // decided once at start
   const [along, setAlong] = useState(0)
   const [paused, setPaused] = useState(false)
-  const [following, setFollowing] = useState(true)
   const alongRef = useRef(0)
   const pausedRef = useRef(paused)
   pausedRef.current = paused
@@ -161,7 +163,7 @@ export default function Navigation({ route, mode, destination, user, units, redu
         {!following && (
           <button
             type="button"
-            onClick={() => setFollowing(true)}
+            onClick={() => onFollowChange(true)}
             className="glass glass-strong glass-btn flex items-center gap-2 rounded-full px-4 py-2.5 text-[14px] font-semibold text-accent-600"
           >
             <Crosshair size={18} weight="bold" /> Re-centre
@@ -190,7 +192,7 @@ export default function Navigation({ route, mode, destination, user, units, redu
           )}
           <button
             type="button"
-            onClick={() => setFollowing((f) => !f)}
+            onClick={() => onFollowChange(!following)}
             aria-pressed={following}
             aria-label="Follow my position"
             className={cx('grid size-12 place-items-center rounded-full', following ? 'bg-accent-600 text-white' : 'bg-[var(--fill)] text-accent-600')}

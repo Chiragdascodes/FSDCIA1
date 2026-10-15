@@ -11,11 +11,14 @@ interface Props {
   label: string
   /** Space reserved below the sheet (e.g. the bottom tab bar). */
   bottom?: number
+  /** Space reserved above the sheet (the floating top bar) — the sheet never slides under it. */
+  top?: number
 }
 
 /** Heights for each resting position (HIG Sheets: medium/large detents + a grabber). */
-function heights(vh: number, bottom: number): Record<Detent, number> {
-  return { peek: 132, half: Math.round(vh * 0.48), full: Math.round(vh - bottom - 96) }
+function heights(vh: number, bottom: number, top: number): Record<Detent, number> {
+  const full = Math.max(200, Math.round(vh - bottom - top))
+  return { peek: 132, half: Math.min(full, Math.round(vh * 0.48)), full }
 }
 
 /**
@@ -23,7 +26,7 @@ function heights(vh: number, bottom: number): Record<Detent, number> {
  * on release it snaps to the nearest detent, taking flick velocity into account.
  * Tapping the grabber cycles detents; keyboard users can press Enter/Space on it.
  */
-export default function Sheet({ detent, onDetent, header, children, label, bottom = 0 }: Props) {
+export default function Sheet({ detent, onDetent, header, children, label, bottom = 0, top = 96 }: Props) {
   const [vh, setVh] = useState(() => window.innerHeight)
   const [drag, setDrag] = useState<number | null>(null)
   const start = useRef<{ y: number; h: number; t: number } | null>(null)
@@ -35,7 +38,7 @@ export default function Sheet({ detent, onDetent, header, children, label, botto
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const h = heights(vh, bottom)
+  const h = heights(vh, bottom, top)
   const height = drag ?? h[detent]
 
   const onPointerDown = useCallback(

@@ -70,12 +70,16 @@ interface Props {
   onMoveEnd(center: { lat: number; lon: number }, zoom: number, byUser: boolean): void
   onReady(): void
   onLongPress(lat: number, lon: number): void
+  /** The user dragged / rotated / zoomed the map themselves (used to pause follow-mode). */
+  onUserGesture?(): void
+  /** First time the map has finished loading tiles (used to hide the loading screen). */
+  onIdle?(): void
   /** Landing-page mode: tilted 3D city, no interaction, slow orbit, ink route with a moving dot. */
   landing: boolean
 }
 
 /** Camera for the landing page: Church Street / MG Road, Bengaluru, tilted like an isometric city. */
-export const LANDING_VIEW = { center: [77.6058, 12.9748] as [number, number], zoom: 16.35, pitch: 62, bearing: -28 }
+export const LANDING_VIEW = { center: [77.6059, 12.9736] as [number, number], zoom: 16.5, pitch: 64, bearing: -28 }
 
 const HANDLERS = ['scrollZoom', 'boxZoom', 'dragRotate', 'dragPan', 'keyboard', 'doubleClickZoom', 'touchZoomRotate'] as const
 
@@ -128,6 +132,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
   const spinning = useRef(true)
   const programmaticMove = useRef(false)
   const handlersAttached = useRef(false)
+  const styleLabels = useRef<string[]>([])
   const navMarkerRef = useRef<{ marker: maplibre.Marker; mode: 'foot' | 'bike' | 'car' } | null>(null)
 
   // ---- create the map once -------------------------------------------------
@@ -145,6 +150,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
       canvasContextAttributes: { antialias: true },
     })
     mapRef.current = map
+    if (import.meta.env.DEV) (window as unknown as { __map: MapLibreMap }).__map = map
     if (p.landing) spinning.current = false
 
     // Slow globe spin until the user does something or we fly to a location.
@@ -170,6 +176,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
       spin()
     })
     map.once('load', () => latest.current.onReady())
+    map.once('idle', () => latest.current.onIdle?.())
 
     map.on('moveend', () => {
       const c = map.getCenter()
@@ -178,6 +185,13 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     })
 
     // Long-press / right-click: "What's here?" + report location.
+    // Gestures started by a person (not by code) carry an originalEvent.
+    for (const ev of ['dragstart', 'rotatestart', 'pitchstart', 'zoomstart'] as const) {
+      map.on(ev, (e: { originalEvent?: Event }) => {
+        if (e.originalEvent) latest.current.onUserGesture?.()
+      })
+    }
+
     map.on('contextmenu', (e) => latest.current.onLongPress(e.lngLat.lat, e.lngLat.lng))
 
     map.on('click', (e) => {
@@ -276,7 +290,9 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
           'source-layer': 'building',
           minzoom: 14.5,
           paint: {
-            'fill-extrusion-color': darkStyle ? '#2a3140' : '#fbfcfe',
+            'fill-extrusion-color': darkStyle
+              ? '#2a3140'
+              : ['interpolate', ['linear'], ['coalesce', ['get', 'render_height'], 8], 0, '#ffffff', 40, '#eef2f8', 120, '#dfe6f1'],
             'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 14.5, 0, 15.5, ['coalesce', ['get', 'render_height'], 8]],
             'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
             'fill-extrusion-opacity': 0.92,
@@ -286,6 +302,33 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
         style.layers.find((l) => l.type === 'symbol')?.id,
       )
     }
+
+    // Raised green parks and soft light give the city a clean "toy model" 3D look.
+    if (p.styleId !== 'satellite' && style.sources.openmaptiles && !map.getLayer('beacon-parks-3d')) {
+      map.addLayer(
+        {
+          id: 'beacon-parks-3d',
+          type: 'fill-extrusion',
+          source: 'openmaptiles',
+          'source-layer': 'park',
+          minzoom: 14,
+          paint: {
+            'fill-extrusion-color': darkStyle ? '#24402c' : '#c9e8b8',
+            'fill-extrusion-height': 2.5,
+            'fill-extrusion-opacity': 0.9,
+          },
+        },
+        map.getLayer('beacon-buildings-3d') ? 'beacon-buildings-3d' : style.layers.find((l) => l.type === 'symbol')?.id,
+      )
+    }
+    try {
+      map.setLight({ anchor: 'viewport', color: '#ffffff', intensity: darkStyle ? 0.25 : 0.4, position: [1.3, 210, 40] })
+    } catch {
+      /* lighting is decorative */
+    }
+    // The style's own labels; hidden on the landing hero for a clean illustration look.
+    styleLabels.current = style.layers.filter((l) => l.type === 'symbol').map((l) => l.id)
+    for (const id of styleLabels.current) map.setLayoutProperty(id, 'visibility', p.landing ? 'none' : 'visible')
 
     if (!map.getSource(SRC_RADIUS)) {
       map.addSource(SRC_RADIUS, { type: 'geojson', data: p.radius ? circle(p.radius.lat, p.radius.lon, p.radius.meters) : EMPTY })
@@ -305,6 +348,19 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
 
     if (!map.getSource(SRC_ROUTE)) {
       map.addSource(SRC_ROUTE, { type: 'geojson', data: routeToGeoJSON(p.route) })
+      // Soft glow under the route so it reads clearly in tilted 3D views.
+      map.addLayer({
+        id: 'route-glow',
+        type: 'line',
+        source: SRC_ROUTE,
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: {
+          'line-color': '#5b8def',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 10, 10, 18, 30],
+          'line-blur': ['interpolate', ['linear'], ['zoom'], 10, 4, 18, 14],
+          'line-opacity': p.landing ? 0 : 0.35,
+        },
+      })
       map.addLayer({
         id: 'route-casing',
         type: 'line',
@@ -482,8 +538,23 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     src?.setData(r ? circle(r.lat, r.lon, r.meters) : EMPTY)
   }, [props.radius])
 
+  // setPadding() cancels any camera animation in progress (it is a jumpTo), so only apply it when
+  // the values really change, and if the camera is flying, wait until the flight ends.
   useEffect(() => {
-    mapRef.current?.setPadding(props.padding)
+    const map = mapRef.current
+    if (!map) return
+    const want = props.padding
+    const apply = () => {
+      const cur = map.getPadding()
+      if (cur.top !== want.top || cur.bottom !== want.bottom || cur.left !== want.left || cur.right !== want.right) {
+        map.setPadding(want)
+      }
+    }
+    if (!map.isMoving()) return apply()
+    map.once('moveend', apply)
+    return () => {
+      map.off('moveend', apply)
+    }
   }, [props.padding])
 
   // User location dot.
@@ -550,6 +621,10 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     if (map.getLayer('route-line')) {
       map.setPaintProperty('route-line', 'line-color', props.landing ? '#111827' : '#5b8def')
       map.setLayoutProperty('route-dash', 'visibility', props.landing ? 'visible' : 'none')
+      if (map.getLayer('route-glow')) map.setPaintProperty('route-glow', 'line-opacity', props.landing ? 0 : 0.35)
+    }
+    for (const id of styleLabels.current) {
+      if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', props.landing ? 'none' : 'visible')
     }
     if (!props.landing) return
     spinning.current = false
@@ -558,7 +633,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     const orbit = (t: number) => {
       const dt = t - last
       last = t
-      if (!latest.current.reducedMotion && !map.isMoving()) map.setBearing(map.getBearing() + dt * 0.0016)
+      if (!latest.current.reducedMotion && !map.isMoving()) map.setBearing(map.getBearing() + dt * 0.0004)
       raf = requestAnimationFrame(orbit)
     }
     raf = requestAnimationFrame(orbit)
@@ -582,7 +657,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
       seg.push(seg[i - 1] + Math.hypot(x2 - x1, (y2 - y1) * 1.0))
     }
     const total = seg[seg.length - 1]
-    const DURATION = 9000
+    const DURATION = 24000
     let raf = 0
     const start = performance.now()
     const step = (t: number) => {
@@ -608,10 +683,11 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     flyTo(lat, lon, zoom = 15, opts = {}) {
       const map = mapRef.current
       if (!map) return
+      if (map.isMoving()) map.stop()
       spinning.current = false
       programmaticMove.current = true
       const duration = latest.current.reducedMotion ? 0 : opts.duration ?? 1600
-      map.flyTo({ center: [lon, lat], zoom, duration, essential: true, curve: 1.6 })
+      map.flyTo({ center: [lon, lat], zoom, duration, essential: true, curve: 1.6, padding: latest.current.padding })
     },
     fitTo(points, maxZoom = 16.5) {
       const map = mapRef.current
@@ -629,19 +705,27 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     fitRoute(route) {
       const map = mapRef.current
       if (!map) return
+      if (map.isMoving()) map.stop()
       programmaticMove.current = true
       const bounds = new maplibre.LngLatBounds()
       route.geometry.coordinates.forEach((c) => bounds.extend(c))
-      map.fitBounds(bounds, { padding: 70, maxZoom: 17, duration: latest.current.reducedMotion ? 0 : 1000 })
+      map.fitBounds(bounds, {
+        padding: 70,
+        maxZoom: 17,
+        duration: latest.current.reducedMotion ? 0 : 1000,
+      })
     },
     zoomBy(delta) {
       const map = mapRef.current
       if (!map) return
+      if (map.isMoving()) map.stop()
       spinning.current = false
       map.easeTo({ zoom: map.getZoom() + delta, duration: latest.current.reducedMotion ? 0 : 300 })
     },
     resetNorth() {
-      mapRef.current?.easeTo({ bearing: 0, pitch: 0, duration: latest.current.reducedMotion ? 0 : 500 })
+      const m = mapRef.current
+      if (m?.isMoving()) m.stop()
+      m?.easeTo({ bearing: 0, pitch: 0, duration: latest.current.reducedMotion ? 0 : 500 })
     },
     center() {
       const c = mapRef.current?.getCenter()
@@ -655,11 +739,12 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
       if (!map) return
       spinning.current = false
       programmaticMove.current = true
-      // Smoothly turn the camera towards the heading (shortest way round).
-      if (map.isMoving()) map.stop() // never fight an in-flight animation
+      // Smoothly turn the camera towards the heading (shortest way round) and ease zoom/pitch.
       const current = map.getBearing()
       const delta = ((heading - current + 540) % 360) - 180
-      map.jumpTo({ center: [lon, lat], bearing: current + delta * 0.12, zoom, pitch })
+      const z = map.getZoom()
+      const pt = map.getPitch()
+      map.jumpTo({ center: [lon, lat], bearing: current + delta * 0.1, zoom: z + (zoom - z) * 0.08, pitch: pt + (pitch - pt) * 0.08 })
     },
     navMarker(pos, heading, mode) {
       const map = mapRef.current
@@ -685,12 +770,14 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     exitNav() {
       const map = mapRef.current
       if (!map) return
+      if (map.isMoving()) map.stop()
       programmaticMove.current = true
       map.easeTo({ pitch: 0, bearing: 0, duration: latest.current.reducedMotion ? 0 : 800 })
     },
     enterApp(lat: number, lon: number) {
       const map = mapRef.current
       if (!map) return
+      if (map.isMoving()) map.stop()
       programmaticMove.current = true
       map.flyTo({
         center: [lon, lat],
@@ -704,6 +791,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     showWholeGlobe() {
       const map = mapRef.current
       if (!map) return
+      if (map.isMoving()) map.stop()
       programmaticMove.current = true
       map.flyTo({ zoom: 1.6, pitch: 0, bearing: 0, duration: latest.current.reducedMotion ? 0 : 2200 })
     },
