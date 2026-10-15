@@ -61,6 +61,11 @@ React, TypeScript, Vite, Tailwind CSS, MapLibre GL, OpenFreeMap, Phosphor icons.
 
 ## AI usage
 
-I used Claude (Anthropic) to help with analysis, code and writing. I chose the problem and design, tested everything and can explain the code.
+- I chose the problem, the target users and the workflow to improve
+- I found the wrong MG Road issue myself while testing OpenStreetMap
+- I designed the custom UI in Figma and set the look and feel
+- I decided the features and tested every version
+- Claude (Anthropic) helped analyse openstreetmap.org, wrote most of the code from my instructions and helped draft the report
+- I have reviewed the code and can explain how it works
 
 Map data © OpenStreetMap contributors (ODbL).

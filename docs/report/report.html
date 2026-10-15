@@ -2,250 +2,129 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Beacon – FSD CIA 2 – Chirag Das</title>
+<title>FSD CIA 2 - Beacon - Chirag Das</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 <style>
-  @page { size: A4; margin: 18mm 18mm 18mm 18mm; }
-  * { box-sizing: border-box; }
-  body {
-    font-family: 'Poppins', sans-serif;
-    font-style: normal;
-    color: #1f2430;
-    font-size: 10.5pt;
-    line-height: 1.7;
-    margin: 0;
-  }
-  .cover { border-bottom: 1px solid #e3e7ee; padding-bottom: 14px; margin-bottom: 26px; }
-  .cover h1 { font-size: 26pt; font-weight: 700; margin: 0 0 2px; letter-spacing: -0.5px; color: #2f6fdf; }
-  .cover .tag { color: #5b6170; margin: 0 0 16px; }
-  .meta { display: grid; grid-template-columns: 130px 1fr; row-gap: 3px; font-size: 10.5pt; }
-  .meta span:nth-child(odd) { color: #7a8090; }
-  .meta span:nth-child(even) { font-weight: 500; }
-  .links { margin-top: 12px; font-size: 10pt; }
-  .links a { color: #2f6fdf; text-decoration: none; }
-  h2 {
-    text-align: center;
-    font-size: 14pt;
-    font-weight: 600;
-    margin: 34px 0 18px;
-    padding: 8px 0;
-    border-top: 1px solid #e3e7ee;
-    border-bottom: 1px solid #e3e7ee;
-    page-break-after: avoid;
-  }
-  h3 { font-size: 11.5pt; font-weight: 600; margin: 20px 0 6px; page-break-after: avoid; }
-  p { margin: 0 0 10px; }
-  ul { margin: 0 0 10px; padding-left: 18px; }
-  li { margin-bottom: 4px; }
-  table { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: 9.5pt; page-break-inside: avoid; }
-  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #e8ebf1; vertical-align: top; }
-  th { font-weight: 600; background: #f4f6fa; }
-  .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 8px 0 16px; }
-  .shots.two { grid-template-columns: repeat(2, 1fr); }
-  figure { margin: 0; page-break-inside: avoid; }
-  figure img { width: 100%; border: 1px solid #e3e7ee; border-radius: 8px; display: block; }
-  figcaption { font-size: 8.5pt; color: #5b6170; margin-top: 4px; text-align: center; }
-  .note { background: #f4f6fa; border-radius: 8px; padding: 10px 14px; font-size: 10pt; }
-  .page-break { page-break-before: always; }
-  code { font-family: 'Poppins', sans-serif; background: #f4f6fa; padding: 1px 5px; border-radius: 4px; font-size: 9.5pt; }
+  @page { size: A4; margin: 20mm 20mm 18mm 20mm; }
+  body { font-family: 'Poppins', sans-serif; font-size: 10.5pt; line-height: 1.65; color: #111; margin: 0; }
+  h1 { font-size: 15pt; font-weight: 600; margin: 0 0 2px; text-align: center; }
+  .sub { text-align: center; font-weight: 600; margin: 0 0 6px; }
+  .who { text-align: center; margin: 0 0 22px; }
+  .who span { margin: 0 8px; }
+  .part { text-align: center; font-weight: 600; font-size: 11.5pt; margin: 26px 0 12px; }
+  h2 { font-size: 10.5pt; font-weight: 600; margin: 16px 0 4px; }
+  p { margin: 0 0 8px; }
+  ul { margin: 0 0 8px; padding-left: 18px; }
+  li { margin-bottom: 2px; }
+  .figs { display: flex; gap: 16px; margin: 10px 0 14px; page-break-inside: avoid; }
+  .figs figure { flex: 1; margin: 0; }
+  .figs img { width: 100%; border: 1px solid #ddd; display: block; }
+  figcaption { font-size: 9pt; margin-top: 4px; text-align: center; }
+  a { color: #111; }
+  .break { page-break-before: always; }
 </style>
 </head>
 <body>
 
-<div class="cover">
-  <h1>Beacon</h1>
-  <p class="tag">Find what you need, right where you are. A better way to find nearby essentials on OpenStreetMap.</p>
-  <div class="meta">
-    <span>Name</span><span>Chirag Das</span>
-    <span>Register No</span><span>2648517</span>
-    <span>Course</span><span>2 MSc AI ML</span>
-    <span>Subject</span><span>FSD CIA 2</span>
-  </div>
-  <div class="links">
-    Live app: <a href="https://chiragdascodes.github.io/FSDCIA1/">chiragdascodes.github.io/FSDCIA1</a><br />
-    GitHub: <a href="https://github.com/Chiragdascodes/FSDCIA1">github.com/Chiragdascodes/FSDCIA1</a>
-  </div>
+<h1>FSD CIA 2: OpenStreetMap UX Improvement</h1>
+<p class="sub">Beacon — Find Nearby Essentials (React, Tailwind CSS, JavaScript)</p>
+<p class="who"><span>Name: Chirag Das</span><span>Register Number: 2648517</span><span>Course: 2 MSc AI ML</span><span>Subject: FSD</span></p>
+
+<p class="part">Part I – Problem Definition and Innovation</p>
+
+<h2>1. Benchmark Analysis</h2>
+<p>I studied the search, place details and directions workflow on openstreetmap.org. My target users are people new to a city, like students who just moved to Bengaluru and need to find a pharmacy, ATM, hospital or washroom quickly.</p>
+<p>OSM already has a search box, a details page for every place, "Query features", directions and map layers. While testing it I found these problems:</p>
+<ul>
+  <li>"pharmacy near MG Road, Bengaluru" gives long address lines with no distance, no open/closed status and no nearest-first order.</li>
+  <li>"pharmacy near me", with the map on Bengaluru, returned pharmacies in Italy and Venezuela.</li>
+  <li>From an India-wide view, "pharmacy near MG Road" picked MG Roads in West Bengal and Mumbai, and never asked which one.</li>
+  <li>Opening hours are shown as raw tags like PH,Mo-Su 08:00-23:30.</li>
+  <li>A place page only has Download XML and History, no directions or call button.</li>
+  <li>Query features lists waste baskets and footpaths along with real places.</li>
+</ul>
+<p>Around MG Road only 17 out of 233 places had opening hours on OSM, so the app must say clearly when hours are not known.</p>
+
+<div class="figs">
+  <figure><img src="../evidence/E2-near-me-returns-italy.jpg" /><figcaption>Figure 1: "pharmacy near me" opens Italy</figcaption></figure>
+  <figure><img src="../evidence/E6-ambiguous-mg-road-wrong-cities.jpg" /><figcaption>Figure 2: MG Road from the wrong city</figcaption></figure>
+</div>
+<div class="figs">
+  <figure><img src="../evidence/E3-raw-opening-hours-tag.jpg" /><figcaption>Figure 3: raw opening hours tag</figcaption></figure>
+  <figure><img src="../evidence/E5-query-features-noise.jpg" /><figcaption>Figure 4: waste baskets in Query features</figcaption></figure>
 </div>
 
-<h2>Part I · Problem Definition and Innovation</h2>
+<h2>2. Problem Definition</h2>
+<p>A newcomer cannot quickly find the nearest essential place that is open right now on OpenStreetMap. "near me" ignores their location, street names land in the wrong city, results have no distance or open status, and there is no simple way to get directions. In practice this means opening many results, reading raw tags, and sometimes walking to a closed shop.</p>
 
-<h3>1 (i) Benchmark analysis</h3>
-<p>
-  I used openstreetmap.org and focused on one workflow: searching for a place, opening it, and getting directions to it.
-  The people I had in mind are newcomers to a city, like students who just moved to Bengaluru and don't know the area yet.
-  They usually need simple things fast: a pharmacy, an ATM, a hospital, a washroom.
-</p>
-<p>What OSM already has: a search box (Nominatim), a page for every place, "Query features", directions with three routing engines, a share option and map layers. I tested all of these myself. These are the problems I found:</p>
-<table>
-  <tr><th style="width:28px">#</th><th>What I saw on openstreetmap.org</th></tr>
-  <tr><td>E1</td><td>"pharmacy near MG Road, Bengaluru" works, but every result is a long address line. No distance, no open or closed status, no sorting by nearest.</td></tr>
-  <tr><td>E2</td><td>"pharmacy near me", with the map sitting on Bengaluru, returned pharmacies in Sicily (Italy) and Venezuela. "near me" is just treated as text.</td></tr>
-  <tr><td>E3</td><td>Opening hours are shown as raw tags like <code>PH,Mo-Su 08:00-23:30</code>. Nothing tells you if it is open right now.</td></tr>
-  <tr><td>E4</td><td>A place page only offers "Download XML" and "History". No directions, call or share button.</td></tr>
-  <tr><td>E5</td><td>"Query features" mixes useful places with things like "Waste Basket #11117253952" and footpaths. No filters.</td></tr>
-  <tr><td>E6</td><td>From an India-wide view, "pharmacy near MG Road" picked MG Roads in West Bengal and Mumbai, not Bengaluru. It never asks which one you meant.</td></tr>
-</table>
-<p>I also checked the data around MG Road. Out of 233 shops and services, only 17 had opening hours. So the app has to be honest when hours are missing.</p>
-<div class="shots">
-  <figure><img src="../evidence/E1-search-results-long-addresses.jpg" /><figcaption>E1 · long addresses, no distance</figcaption></figure>
-  <figure><img src="../evidence/E2-near-me-returns-italy.jpg" /><figcaption>E2 · "near me" goes to Italy</figcaption></figure>
-  <figure><img src="../evidence/E6-ambiguous-mg-road-wrong-cities.jpg" /><figcaption>E6 · wrong MG Road</figcaption></figure>
-  <figure><img src="../evidence/E3-raw-opening-hours-tag.jpg" /><figcaption>E3 · raw opening hours</figcaption></figure>
-  <figure><img src="../evidence/E4-place-page-no-actions.jpg" /><figcaption>E4 · no directions or call</figcaption></figure>
-  <figure><img src="../evidence/E5-query-features-noise.jpg" /><figcaption>E5 · waste baskets in results</figcaption></figure>
+<h2>3. Proposed Solution</h2>
+<p>Beacon is a focused web app on OpenStreetMap data. You type what you need the way you would say it, and it shows the nearest places with distance, walking time and whether they are open, then takes you there.</p>
+<p>Search understands "pharmacy near me", "atm near MG Road" or "24/7 hospital nearby". "near me" uses your location, or your city if location is off. When a street name exists in more than one place it shows cards with the area, city and distance so you can pick, or it picks the nearest one if that is obvious. Each place has a card with Go Now, Call, Website, Save and Share, and Start opens turn-by-turn navigation for walking, cycling or driving.</p>
+<p>The interface is built with HTML5 and Tailwind CSS. On phones the search sits on top with category chips under it, results come up in a bottom sheet and there is a tab bar at the bottom. On desktop the same parts sit in a left panel. It uses Apple's Liquid Glass style, a 3D globe at the start, and light theme by default.</p>
+
+<div class="break"></div>
+<p class="part">Part II – JavaScript Implementation</p>
+
+<h2>4. Events</h2>
+<p>Typing in the search box (input, debounced) loads suggestions, submitting the form runs the search, clicking a pin opens the place, right-click shows the address of that spot, keydown handles shortcuts (/ search, Esc close, L locate, 1–9 categories), pointer events drag the bottom sheet, online/offline shows a banner, and the microphone uses the speech recognition result and end events.</p>
+
+<h2>5. Form with Validation</h2>
+<p>The Report a Problem form checks the problem type, place name, details (at least 15 characters), optional email or phone, the location pin and a consent tick. Each field is checked when you leave it and all of them on submit. Errors show under the field and as a list at the top. A valid report is saved on the device and can be posted as an OSM Note.</p>
+
+<h2>6. Fetch API and JSON</h2>
+<p>Suggestions come from Photon, places and nearby search from Nominatim, extra details from Overpass, routes from OSRM and place photos from Wikidata. All responses are read as JSON and converted into one common place format.</p>
+
+<h2>7. Errors, Loading and Empty States</h2>
+<p>Skeleton loaders show while searching and "Finding your location" while locating. Nominatim results appear first and Overpass details are added later, since Overpass took 29 to 43 seconds in my tests. Every request has a timeout with a clear message and a retry button. Empty results offer a wider search, and if location is denied the app uses the chosen city and says so.</p>
+
+<div class="figs">
+  <figure><img src="../screenshots/01-landing.jpg" /><figcaption>Figure 5: landing page</figcaption></figure>
+  <figure><img src="../screenshots/04-which-church-street.jpg" /><figcaption>Figure 6: choosing the right Church Street</figcaption></figure>
+  <figure><img src="../screenshots/05-results.jpg" /><figcaption>Figure 7: nearest pharmacies</figcaption></figure>
+</div>
+<div class="figs">
+  <figure><img src="../screenshots/06-place-card.jpg" /><figcaption>Figure 8: place card</figcaption></figure>
+  <figure><img src="../screenshots/07-route.jpg" /><figcaption>Figure 9: walking route</figcaption></figure>
+  <figure><img src="../screenshots/08-navigation.jpg" /><figcaption>Figure 10: navigation</figcaption></figure>
+</div>
+<div class="figs">
+  <figure><img src="../screenshots/09-report-validation.jpg" /><figcaption>Figure 11: form validation</figcaption></figure>
+  <figure><img src="../screenshots/02-globe.jpg" /><figcaption>Figure 12: 3D globe</figcaption></figure>
+  <figure><img src="../screenshots/03-explore.jpg" /><figcaption>Figure 13: explore view</figcaption></figure>
 </div>
 
-<h3>1 (ii) Problem definition</h3>
-<p>
-  <b>Problem statement:</b> someone new to a city cannot quickly find the nearest essential place that is open right now using OpenStreetMap.
-  "near me" doesn't use their location, street names land in the wrong city, results have no distance or open status,
-  and there is no easy way to get directions from a place.
-</p>
-<p>
-  The impact is real. A student with a fever at night opens several results, reads raw tags, types the address again for directions,
-  and may still end up at a closed shop or in the wrong part of the country. Most people just give up and use another app,
-  even though OSM has the data.
-</p>
+<div class="break"></div>
+<p class="part">Part III – Documentation, GitHub and Deployment</p>
 
-<h3>1 (iii) Innovative solution</h3>
-<p>I built <b>Beacon</b>, a web app on top of OpenStreetMap data that does one job well: get you to the nearest essential place.</p>
+<h2>8. Links</h2>
+<p>Live app: <a href="https://chiragdascodes.github.io/FSDCIA1/">chiragdascodes.github.io/FSDCIA1</a><br />
+GitHub: <a href="https://github.com/Chiragdascodes/FSDCIA1">github.com/Chiragdascodes/FSDCIA1</a></p>
+<p>The repository has a README and commits for each stage. Every push runs the tests, builds the app and deploys it to GitHub Pages. To run it locally: npm install, then npm run dev.</p>
+
+<h2>9. Testing</h2>
+<p>There are 64 automated tests and all of them pass. They cover the search parser, choosing the right MG Road, opening hours, distances, form validation, fetch error handling and navigation. I also tested by hand: "pharmacy near MG Road" picks Bengaluru and lists 20 pharmacies nearest first, "hospital near Church Street" asks which of the two Church Streets I mean, location denied falls back to Bengaluru, the form only saves valid input, Go Now and Start follow the route, results still show when Overpass is down, and the layout works on phone and desktop without sideways scrolling.</p>
+
+<h2>10. Limitations</h2>
 <ul>
-  <li>It understands normal language: "pharmacy near me", "atm near MG Road", "open 24/7 hospital nearby", even "medical shop" or "petrol bunk".</li>
-  <li>"near me" uses your real location. If location is off, it uses your city (Bengaluru by default) and says so.</li>
-  <li>If a name is ambiguous, it shows cards like Google Maps with the area, city and distance, nearest first. If one is clearly nearest, it picks it and lets you change.</li>
-  <li>Results are sorted by distance with walking time and a plain "Open · closes 23:30" or "Hours unknown".</li>
-  <li>Filters for open now, 24/7 and wheelchair, and a radius picker.</li>
-  <li>Place card with photo or logo, Call, Website, Save, Share and a big Go Now button.</li>
-  <li>Directions for walk, cycle and car, and a Start mode that works like Google Maps navigation.</li>
-  <li>Voice search, saved places, a report form for wrong info, a 3D globe, and Liquid Glass styling based on Apple's design guidelines.</li>
-</ul>
-
-<table>
-  <tr><th>Feature</th><th>HTML5</th><th>Tailwind CSS</th><th>JavaScript</th></tr>
-  <tr><td>Search bar</td><td>form role="search", input type="search", combobox list</td><td>glass pill, focus ring, responsive width</td><td>query parser, debounced suggestions, keyboard nav</td></tr>
-  <tr><td>Voice search</td><td>button with aria-pressed</td><td>red mic button, pulse while listening</td><td>Web Speech API events</td></tr>
-  <tr><td>Category chips</td><td>buttons in a group, "More" dialog</td><td>rounded pills, grid in popover</td><td>ResizeObserver fits chips to width</td></tr>
-  <tr><td>"Which one?" cards</td><td>list of buttons</td><td>cards with hover state</td><td>Photon fetch, distance ranking</td></tr>
-  <tr><td>Results</td><td>ol / li, time</td><td>skeleton loaders, badges</td><td>Nominatim + Overpass fetch, sorting, filters</td></tr>
-  <tr><td>Place card</td><td>section, table for hours, links</td><td>photo header, blue Go Now</td><td>opening_hours parsing, Wikidata photo fetch</td></tr>
-  <tr><td>Directions + Start</td><td>ol of steps, dl summary</td><td>route card, nav banner</td><td>OSRM fetch, GPS watch, route snapping</td></tr>
-  <tr><td>Report form</td><td>form, select, textarea, checkbox, required</td><td>error and success styles</td><td>validation on blur and submit, localStorage</td></tr>
-  <tr><td>Layout</td><td>header, nav, aside, main sections</td><td>sidebar on desktop, bottom sheet on phone</td><td>pointer events for the sheet</td></tr>
-</table>
-
-<div class="page-break"></div>
-<h2>Part II · JavaScript Implementation</h2>
-
-<p>The app uses React with TypeScript for the screens. The core JavaScript the paper asks for is kept in plain <code>.js</code> files inside <code>src/js</code> so it is easy to read and check.</p>
-
-<h3>Meaningful JavaScript events</h3>
-<ul>
-  <li><b>input</b> on the search box, debounced, fetches live suggestions.</li>
-  <li><b>submit</b> on the search form runs the search.</li>
-  <li><b>click</b> on map pins opens the place card. Right click on the map shows the address of that spot.</li>
-  <li><b>keydown</b> for shortcuts: / to search, Esc to close, L to locate, 1–9 for categories.</li>
-  <li><b>pointerdown / pointermove / pointerup</b> to drag the bottom sheet on phones.</li>
-  <li><b>online / offline</b> shows a banner when the connection drops.</li>
-  <li>Geolocation callbacks and speech recognition <b>result</b> and <b>end</b> events.</li>
-</ul>
-
-<h3>Form with validation and feedback</h3>
-<p>
-  The "Report a problem" form checks the type, place name, details (at least 15 characters), an optional email or phone,
-  the map location and a consent tick. Each field is checked when you leave it, and everything is checked on submit.
-  Errors show under the field and in a summary at the top. When it is valid you get a success screen and a toast,
-  and the report is saved on the device with an option to post it as an OSM Note. The search box and settings form are validated too.
-</p>
-
-<h3>Fetch API and JSON</h3>
-<ul>
-  <li><b>Photon</b> for suggestions while typing.</li>
-  <li><b>Nominatim</b> for places, nearby category search and reverse geocoding.</li>
-  <li><b>Overpass</b> for extra place details.</li>
-  <li><b>OSRM</b> for walking, cycling and driving routes.</li>
-  <li><b>Wikidata</b> for place photos and brand logos.</li>
-</ul>
-<p>Every response is parsed from JSON and turned into one simple place format, so the screens don't care where the data came from.</p>
-
-<h3>Errors, loading and empty states</h3>
-<ul>
-  <li>Skeleton loaders and "Finding your location…" while waiting.</li>
-  <li>Fast results first from Nominatim, then more details in the background. Overpass was very slow in my tests (29 to 43 seconds), so this matters.</li>
-  <li>Every request has a timeout. Errors show a clear message and a Try again button.</li>
-  <li>Empty results say so and offer to search a wider area or report a missing place.</li>
-  <li>If location is denied, it falls back to the chosen city and tells you.</li>
-</ul>
-
-<h3>How it solves the problem</h3>
-<table>
-  <tr><th>On OpenStreetMap</th><th>In Beacon</th></tr>
-  <tr><td>"near me" goes to Italy (E2)</td><td>Uses your location</td></tr>
-  <tr><td>Wrong MG Road (E6)</td><td>Nearest one, or "Which one?" cards</td></tr>
-  <tr><td>No distance or order (E1)</td><td>Nearest first with walking time</td></tr>
-  <tr><td>Raw hours (E3)</td><td>"Open · closes 23:30" and a weekly table</td></tr>
-  <tr><td>No actions on a place (E4)</td><td>Go Now, Call, Website, Save, Share</td></tr>
-  <tr><td>Noisy results (E5)</td><td>Only real places, with filters</td></tr>
-</table>
-
-<div class="shots">
-  <figure><img src="../screenshots/01-landing.jpg" /><figcaption>Landing page</figcaption></figure>
-  <figure><img src="../screenshots/02-globe.jpg" /><figcaption>3D globe on start</figcaption></figure>
-  <figure><img src="../screenshots/03-explore.jpg" /><figcaption>Explore</figcaption></figure>
-  <figure><img src="../screenshots/04-which-church-street.jpg" /><figcaption>"Which Church Street?"</figcaption></figure>
-  <figure><img src="../screenshots/05-results.jpg" /><figcaption>Nearest pharmacies</figcaption></figure>
-  <figure><img src="../screenshots/06-place-card.jpg" /><figcaption>Place card</figcaption></figure>
-  <figure><img src="../screenshots/07-route.jpg" /><figcaption>Route card</figcaption></figure>
-  <figure><img src="../screenshots/08-navigation.jpg" /><figcaption>Start navigation</figcaption></figure>
-  <figure><img src="../screenshots/09-report-validation.jpg" /><figcaption>Form validation</figcaption></figure>
-</div>
-
-<div class="page-break"></div>
-<h2>Part III · Documentation, GitHub and Deployment</h2>
-
-<h3>Links</h3>
-<p>
-  Live app: <a href="https://chiragdascodes.github.io/FSDCIA1/">https://chiragdascodes.github.io/FSDCIA1/</a><br />
-  GitHub repo: <a href="https://github.com/Chiragdascodes/FSDCIA1">https://github.com/Chiragdascodes/FSDCIA1</a>
-</p>
-<p>The repo has a README and a commit for every step (analysis, setup, core logic, map, search, place card, PWA, redesign, navigation). Every push runs the tests, builds and deploys to GitHub Pages on its own.</p>
-
-<h3>Run it locally</h3>
-<p><code>npm install</code> then <code>npm run dev</code>. Tests: <code>npm test</code>. Build: <code>npm run build</code>.</p>
-
-<h3>Tech used</h3>
-<p>React, TypeScript, Vite, Tailwind CSS, MapLibre GL for the map and globe, OpenFreeMap map styles, Phosphor icons, and free OpenStreetMap services. No login or backend, everything runs in the browser.</p>
-
-<h3>Testing</h3>
-<p>64 automated tests, all passing. They cover the search parser (like "medical shop near me" and "atm near MG Road"), picking the right MG Road, opening hours, distance, form validation, the fetch error handling and the navigation maths. The full log is in <code>docs/test-results.txt</code>.</p>
-<table>
-  <tr><th>What I tested by hand</th><th>Result</th></tr>
-  <tr><td>"pharmacy near MG Road" from Bengaluru</td><td>Picks Bengaluru's MG Road, 20 pharmacies, nearest first</td></tr>
-  <tr><td>"hospital near Church Street"</td><td>Asks which one, shows two Church Streets with area and distance</td></tr>
-  <tr><td>Location denied</td><td>Falls back to Bengaluru and says so</td></tr>
-  <tr><td>Report form with bad input</td><td>Errors shown per field, saved only when valid</td></tr>
-  <tr><td>Go Now and Start</td><td>Route drawn, navigation follows the route</td></tr>
-  <tr><td>Overpass server down</td><td>Results still shown with a small note</td></tr>
-  <tr><td>Phone and desktop sizes</td><td>Layout adapts, no sideways scrolling</td></tr>
-</table>
-
-<h3>Limitations</h3>
-<ul>
-  <li>Most places in OSM have no opening hours, so many show "Hours unknown".</li>
+  <li>Most places on OSM have no opening hours yet.</li>
   <li>The free Overpass and routing servers can be slow or busy.</li>
   <li>No live traffic or public transport routes.</li>
-  <li>Navigation needs real GPS to follow you. On a laptop it plays a simulated trip.</li>
-  <li>Voice search works in Chrome, Edge and Safari only.</li>
-  <li>Reports stay on the device unless you post them as an OSM Note.</li>
+  <li>Navigation needs real GPS; on a laptop it plays a simulated trip.</li>
+  <li>Voice search works only in Chrome, Edge and Safari.</li>
 </ul>
 
-<h3>AI usage declaration</h3>
-<p class="note">
-  I used Claude (an AI assistant by Anthropic) while making this project. It helped me analyse openstreetmap.org, write and debug code,
-  and draft this document. I decided the problem, the user group and the design direction, gave the UI references,
-  tested the app myself and asked for changes until it worked the way I wanted. I have gone through the code and can explain how it works.
-</p>
+<h2>11. AI Usage Declaration</h2>
+<ul>
+  <li>I chose the problem, the target users and the workflow to improve.</li>
+  <li>I found the wrong MG Road issue myself while testing OpenStreetMap.</li>
+  <li>I designed the custom UI in Figma and set the look: landing page, white and blue theme, Liquid Glass, circular icons, light theme.</li>
+  <li>I decided the features, including Google Maps style navigation and no horizontal scrolling.</li>
+  <li>I tested every version and asked for changes until it worked the way I wanted.</li>
+  <li>I used Claude (Anthropic) as an assistant: it helped analyse openstreetmap.org, wrote most of the code from my instructions and helped draft this report.</li>
+  <li>I have reviewed the code and can explain how it works.</li>
+</ul>
 
 </body>
 </html>
