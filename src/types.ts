@@ -33,5 +33,6 @@ export type View =
   | { name: 'directions'; id: string }
   | { name: 'report'; id: string | null }
   | { name: 'saved' }
+  | { name: 'reports' }
   | { name: 'settings' }
   | { name: 'shortcuts' }

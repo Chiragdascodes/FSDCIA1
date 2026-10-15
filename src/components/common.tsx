@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ChevronLeft, ChevronRight, CircleAlert, X } from 'lucide-react'
+import { CaretLeft, CaretRight, WarningCircle, X } from '@phosphor-icons/react'
 import { getCategory } from '../js/categories.js'
 import { estimateSeconds, formatDistance, formatDuration } from '../js/geo.js'
 import { getOpenStatus } from '../js/hours.js'
@@ -30,11 +30,11 @@ export function ViewHeader({
           aria-label="Back"
           className="glass-btn -ml-1 grid size-9 shrink-0 place-items-center rounded-full bg-[var(--fill)] hover:bg-[var(--fill-2)]"
         >
-          <ChevronLeft className="size-5" />
+          <CaretLeft size={20} weight="bold" />
         </button>
       )}
       <div className="min-w-0 flex-1 pt-0.5">
-        <h2 className="text-[20px] leading-tight font-bold tracking-tight">{title}</h2>
+        <h2 className="font-display text-[21px] leading-tight font-bold tracking-tight">{title}</h2>
         {subtitle && <p className="label-2 mt-0.5 text-[13.5px]">{subtitle}</p>}
       </div>
       {right}
@@ -45,34 +45,29 @@ export function ViewHeader({
           aria-label="Close"
           className="glass-btn grid size-9 shrink-0 place-items-center rounded-full bg-[var(--fill)] hover:bg-[var(--fill-2)]"
         >
-          <X className="size-[18px]" />
+          <X size={18} weight="bold" />
         </button>
       )}
     </header>
   )
 }
 
-const BADGE: Record<string, string> = {
-  open: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
-  soon: 'bg-amber-500/18 text-amber-700 dark:text-amber-300',
-  closed: 'bg-red-500/12 text-red-700 dark:text-red-300',
-  unknown: 'bg-[var(--fill)] text-[var(--label-2)]',
-}
-
+/** "Open • Closes 23:30" — the state word coloured, the detail in grey (as in the reference UI). */
 export function OpenBadge({ status, className }: { status: OpenStatus; className?: string }) {
   const key = status.state === 'open' ? (status.closingSoon ? 'soon' : 'open') : status.state
+  const [head, ...rest] = status.label.split(' · ')
+  const color =
+    key === 'open'
+      ? 'text-emerald-600 dark:text-emerald-400'
+      : key === 'soon'
+        ? 'text-amber-600 dark:text-amber-400'
+        : key === 'closed'
+          ? 'text-pin-600'
+          : 'label-3'
   return (
-    <span className={cx('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-semibold', BADGE[key], className)}>
-      <span
-        className={cx(
-          'size-1.5 rounded-full',
-          key === 'open' && 'bg-emerald-500',
-          key === 'soon' && 'bg-amber-500',
-          key === 'closed' && 'bg-red-500',
-          key === 'unknown' && 'bg-[var(--label-3)]',
-        )}
-      />
-      {status.label}
+    <span className={cx('inline-flex items-center gap-1 text-[13px]', className)}>
+      <span className={cx('font-semibold', color)}>{head}</span>
+      {rest.length > 0 && <span className="label-2">• {rest.join(' · ')}</span>}
     </span>
   )
 }
@@ -82,11 +77,11 @@ export function CategoryDot({ place, size = 'md' }: { place: Place; size?: 'md' 
   const Icon = iconFor(cat?.icon)
   return (
     <span
-      className={cx('grid shrink-0 place-items-center rounded-full text-white', size === 'lg' ? 'size-12' : 'size-10')}
-      style={{ background: cat?.color ?? '#64748b' }}
+      className={cx('grid shrink-0 place-items-center rounded-full', size === 'lg' ? 'size-12' : 'size-11')}
+      style={{ background: `${cat?.color ?? '#64748b'}1f`, color: cat?.color ?? '#64748b' }}
       aria-hidden
     >
-      <Icon className={size === 'lg' ? 'size-6' : 'size-5'} strokeWidth={2.2} />
+      <Icon size={size === 'lg' ? 26 : 22} weight="fill" />
     </span>
   )
 }
@@ -118,7 +113,7 @@ export function PlaceRow({
         aria-current={selected ? 'true' : undefined}
         className={cx(
           'group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors',
-          selected ? 'bg-accent-500/12' : 'hover:bg-[var(--fill-2)]',
+          selected ? 'bg-accent-50' : 'hover:bg-[var(--fill-2)]',
         )}
       >
         <CategoryDot place={place} />
@@ -126,7 +121,7 @@ export function PlaceRow({
           <span className="flex items-baseline gap-2">
             <span className="truncate text-[15.5px] font-semibold">{place.name}</span>
             {rank === 0 && (
-              <span className="shrink-0 rounded-full bg-accent-600 px-1.5 py-px text-[10.5px] font-bold text-white uppercase">
+              <span className="shrink-0 rounded-md bg-accent-100 px-1.5 py-px text-[10.5px] font-bold text-accent-700 uppercase">
                 Nearest
               </span>
             )}
@@ -135,9 +130,9 @@ export function PlaceRow({
             {place.kind}
             {address ? ` · ${address}` : ''}
           </span>
-          <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
+          <span className="mt-1 flex flex-wrap items-center gap-1.5">
             <OpenBadge status={status} />
-            {wheelchair && <span className="label-2 rounded-full bg-[var(--fill)] px-2 py-0.5 text-[12px]">♿ Accessible</span>}
+            {wheelchair && <span className="label-2 rounded-full bg-[var(--fill)] px-2 py-0.5 text-[12px]">Wheelchair ok</span>}
           </span>
         </span>
         {place.distance !== undefined && (
@@ -146,7 +141,7 @@ export function PlaceRow({
             <span className="label-3 block text-[12px] tabular-nums">{walk} walk</span>
           </span>
         )}
-        <ChevronRight className="label-3 size-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
+        <CaretRight size={16} weight="bold" className="label-3 shrink-0 transition-transform group-hover:translate-x-0.5" />
       </button>
     </li>
   )
@@ -188,10 +183,10 @@ export function EmptyState({
       <span
         className={cx(
           'mb-3 grid size-14 place-items-center rounded-full',
-          tone === 'error' ? 'bg-red-500/12 text-red-600 dark:text-red-400' : 'bg-[var(--fill)] text-[var(--label-2)]',
+          tone === 'error' ? 'bg-pin-500/10 text-pin-600' : 'bg-accent-50 text-accent-600',
         )}
       >
-        {icon ?? <CircleAlert className="size-6" />}
+        {icon ?? <WarningCircle size={28} weight="duotone" />}
       </span>
       <p className="text-[16px] font-semibold">{title}</p>
       {body && <p className="label-2 mt-1 max-w-[300px] text-[14px]">{body}</p>}

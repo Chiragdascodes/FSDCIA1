@@ -9,11 +9,13 @@ interface Props {
   header?: ReactNode
   children: ReactNode
   label: string
+  /** Space reserved below the sheet (e.g. the bottom tab bar). */
+  bottom?: number
 }
 
 /** Heights for each resting position (HIG Sheets: medium/large detents + a grabber). */
-function heights(vh: number): Record<Detent, number> {
-  return { peek: 148, half: Math.round(vh * 0.5), full: Math.round(vh - 104) }
+function heights(vh: number, bottom: number): Record<Detent, number> {
+  return { peek: 132, half: Math.round(vh * 0.48), full: Math.round(vh - bottom - 96) }
 }
 
 /**
@@ -21,7 +23,7 @@ function heights(vh: number): Record<Detent, number> {
  * on release it snaps to the nearest detent, taking flick velocity into account.
  * Tapping the grabber cycles detents; keyboard users can press Enter/Space on it.
  */
-export default function Sheet({ detent, onDetent, header, children, label }: Props) {
+export default function Sheet({ detent, onDetent, header, children, label, bottom = 0 }: Props) {
   const [vh, setVh] = useState(() => window.innerHeight)
   const [drag, setDrag] = useState<number | null>(null)
   const start = useRef<{ y: number; h: number; t: number } | null>(null)
@@ -33,7 +35,7 @@ export default function Sheet({ detent, onDetent, header, children, label }: Pro
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const h = heights(vh)
+  const h = heights(vh, bottom)
   const height = drag ?? h[detent]
 
   const onPointerDown = useCallback(
@@ -87,10 +89,11 @@ export default function Sheet({ detent, onDetent, header, children, label }: Pro
       as="section"
       aria-label={label}
       className={cx(
-        'pointer-events-auto absolute inset-x-0 bottom-0 z-20 flex flex-col rounded-t-[28px] pb-[env(safe-area-inset-bottom)]',
+        'pointer-events-auto absolute inset-x-0 z-20 flex flex-col rounded-t-[28px]',
+        bottom === 0 && 'pb-[env(safe-area-inset-bottom)]',
         drag === null && 'transition-[height] duration-500 ease-[var(--ease-spring)]',
       )}
-      style={{ height }}
+      style={{ height, bottom }}
     >
       <div
         className="shrink-0 cursor-grab touch-none select-none active:cursor-grabbing"
@@ -105,7 +108,7 @@ export default function Sheet({ detent, onDetent, header, children, label }: Pro
           onClick={cycle}
           className="mx-auto mt-2 mb-1 block h-5 w-16"
         >
-          <span className="mx-auto block h-[5px] w-10 rounded-full bg-[var(--label-3)]" />
+          <span className="mx-auto block h-[5px] w-10 rounded-full bg-[var(--label-3)] opacity-60" />
         </button>
         {header}
       </div>

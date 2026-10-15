@@ -11,6 +11,7 @@ import {
   CITIES,
   clearRecents as clearRecentsStore,
   loadRecents,
+  loadReports,
   loadSaved,
   loadSettings,
   saveSettings,
@@ -69,6 +70,8 @@ export function useBeacon(mapRef: RefObject<BeaconMapHandle | null>) {
   const [routeStatus, setRouteStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [routeError, setRouteError] = useState<string | null>(null)
   const [mode, setMode] = useState<TravelMode>(settings.mode)
+  const [routeReversed, setRouteReversed] = useState(false)
+  const [reports, setReports] = useState(() => loadReports())
   const [toasts, setToasts] = useState<Toast[]>([])
   const [searchAreaAt, setSearchAreaAt] = useState<LatLon | null>(null)
   const [pickLocation, setPickLocation] = useState<LatLon | null>(null)
@@ -128,6 +131,16 @@ export function useBeacon(mapRef: RefObject<BeaconMapHandle | null>) {
   const back = useCallback(() => {
     setViews((s) => (s.length > 1 ? s.slice(0, -1) : s))
   }, [])
+  /** Bottom-tab navigation: Saved / Reports / You open on top of the Explore stack. */
+  const showTab = useCallback((tab: 'explore' | 'saved' | 'reports' | 'settings') => {
+    const TAB_VIEWS = ['saved', 'reports', 'settings', 'shortcuts']
+    setViews((s) => {
+      const explore = s.filter((v) => !TAB_VIEWS.includes(v.name))
+      const base = explore.length ? explore : [{ name: 'home' } as View]
+      return tab === 'explore' ? base : [...base, { name: tab } as View]
+    })
+  }, [])
+
   const goHome = useCallback(() => {
     controller.current?.abort()
     setViews([{ name: 'home' }])
@@ -578,10 +591,11 @@ export function useBeacon(mapRef: RefObject<BeaconMapHandle | null>) {
 
   // ---- directions -------------------------------------------------------------
   const directions = useCallback(
-    async (id: string, travel: TravelMode = mode) => {
+    async (id: string, travel: TravelMode = mode, reversed = false) => {
       const dest = placesById.get(id)
       if (!dest) return
       setMode(travel)
+      setRouteReversed(reversed)
       push({ name: 'directions', id })
       setRouteStatus('loading')
       setRouteError(null)
@@ -594,7 +608,8 @@ export function useBeacon(mapRef: RefObject<BeaconMapHandle | null>) {
         if (at.kind !== 'me') toast(`Route starts from ${anchor?.label ?? at.label} (your location is unavailable).`, 'info')
       }
       try {
-        const r = (await api.getRoute(travel, from, dest, routeController.current.signal)) as Route
+        const [a, z] = reversed ? [dest, from] : [from, dest]
+        const r = (await api.getRoute(travel, a, z, routeController.current.signal)) as Route
         setRoute(r)
         setRouteStatus('done')
         mapRef.current?.fitRoute(r)
@@ -624,6 +639,8 @@ export function useBeacon(mapRef: RefObject<BeaconMapHandle | null>) {
     },
     [toast],
   )
+  const refreshReports = useCallback(() => setReports(loadReports()), [])
+
   const clearRecents = useCallback(() => {
     clearRecentsStore()
     setRecents([])
@@ -656,6 +673,9 @@ export function useBeacon(mapRef: RefObject<BeaconMapHandle | null>) {
     selectedId,
     placesById,
     route,
+    routeReversed,
+    reports,
+    refreshReports,
     routeStatus,
     routeError,
     mode,
@@ -689,6 +709,7 @@ export function useBeacon(mapRef: RefObject<BeaconMapHandle | null>) {
     push,
     back,
     goHome,
+    showTab,
     toast,
     dismissToast,
     setPickLocation,

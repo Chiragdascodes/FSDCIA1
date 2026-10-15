@@ -24,6 +24,8 @@ export interface BeaconMapHandle {
   center(): { lat: number; lon: number }
   zoom(): number
   showWholeGlobe(): void
+  /** Leave the landing view: un-tilt and fly to the app's starting point. */
+  enterApp(lat: number, lon: number): void
 }
 
 interface Props {
@@ -43,7 +45,14 @@ interface Props {
   onMoveEnd(center: { lat: number; lon: number }, zoom: number, byUser: boolean): void
   onReady(): void
   onLongPress(lat: number, lon: number): void
+  /** Landing-page mode: tilted 3D city, no interaction, slow orbit, ink route with a moving dot. */
+  landing: boolean
 }
+
+/** Camera for the landing page: Church Street / MG Road, Bengaluru, tilted like an isometric city. */
+export const LANDING_VIEW = { center: [77.6058, 12.9748] as [number, number], zoom: 16.35, pitch: 62, bearing: -28 }
+
+const HANDLERS = ['scrollZoom', 'boxZoom', 'dragRotate', 'dragPan', 'keyboard', 'doubleClickZoom', 'touchZoomRotate'] as const
 
 const SRC_PLACES = 'beacon-places'
 const SRC_ROUTE = 'beacon-route'
@@ -102,13 +111,15 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     const map = new maplibre.Map({
       container: container.current,
       style: MAP_STYLES[p.styleId].style as string | StyleSpecification,
-      center: [78.9, 20.6],
-      zoom: window.innerWidth < 768 ? 0.9 : 1.6,
+      ...(p.landing
+        ? LANDING_VIEW
+        : { center: [78.9, 20.6] as [number, number], zoom: window.innerWidth < 768 ? 0.9 : 1.6 }),
       attributionControl: { compact: true },
       maxPitch: 70,
       canvasContextAttributes: { antialias: true },
     })
     mapRef.current = map
+    if (p.landing) spinning.current = false
 
     // Slow globe spin until the user does something or we fly to a location.
     const stopSpin = () => {
@@ -211,19 +222,58 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
       )
     }
 
+    // Match the reference palette on the muted style: bluish-white land, soft green parks, light-blue water.
+    if (p.styleId === 'muted') {
+      const tint: [string, string, string][] = [
+        ['background', 'background-color', '#eef1f5'],
+        ['park', 'fill-color', '#d3ecc4'],
+        ['landcover_wood', 'fill-color', '#dcefd0'],
+        ['water', 'fill-color', '#b3d7f5'],
+        ['landuse_residential', 'fill-color', '#e8ecf1'],
+        ['building', 'fill-color', '#e1e6ec'],
+      ]
+      const paint = map as unknown as { setPaintProperty(layer: string, prop: string, value: unknown): void }
+      for (const [id, prop, color] of tint) {
+        if (map.getLayer(id)) paint.setPaintProperty(id, prop, color)
+      }
+      if (map.getLayer('park')) paint.setPaintProperty('park', 'fill-opacity', 1)
+    }
+
+    // 3D buildings (white blocks, like the reference) when the style doesn't already extrude them.
+    const style = map.getStyle()
+    if (p.styleId !== 'satellite' && !style.layers.some((l) => l.type === 'fill-extrusion') && style.sources.openmaptiles) {
+      map.addLayer(
+        {
+          id: 'beacon-buildings-3d',
+          type: 'fill-extrusion',
+          source: 'openmaptiles',
+          'source-layer': 'building',
+          minzoom: 14.5,
+          paint: {
+            'fill-extrusion-color': darkStyle ? '#2a3140' : '#fbfcfe',
+            'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 14.5, 0, 15.5, ['coalesce', ['get', 'render_height'], 8]],
+            'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
+            'fill-extrusion-opacity': 0.92,
+            'fill-extrusion-vertical-gradient': true,
+          },
+        },
+        style.layers.find((l) => l.type === 'symbol')?.id,
+      )
+    }
+
     if (!map.getSource(SRC_RADIUS)) {
       map.addSource(SRC_RADIUS, { type: 'geojson', data: p.radius ? circle(p.radius.lat, p.radius.lon, p.radius.meters) : EMPTY })
       map.addLayer({
         id: 'radius-fill',
         type: 'fill',
         source: SRC_RADIUS,
-        paint: { 'fill-color': '#10b981', 'fill-opacity': 0.06 },
+        paint: { 'fill-color': '#5b8def', 'fill-opacity': 0.06 },
       })
       map.addLayer({
         id: 'radius-line',
         type: 'line',
         source: SRC_RADIUS,
-        paint: { 'line-color': '#10b981', 'line-width': 1.5, 'line-opacity': 0.6, 'line-dasharray': [2, 2] },
+        paint: { 'line-color': '#5b8def', 'line-width': 1.5, 'line-opacity': 0.6, 'line-dasharray': [2, 2] },
       })
     }
 
@@ -242,8 +292,20 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
         source: SRC_ROUTE,
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: {
-          'line-color': '#0a84ff',
+          'line-color': p.landing ? '#111827' : '#5b8def',
           'line-width': ['interpolate', ['linear'], ['zoom'], 10, 3.5, 18, 9],
+        },
+      })
+      // White dashes along the ink route on the landing page (like the reference illustration).
+      map.addLayer({
+        id: 'route-dash',
+        type: 'line',
+        source: SRC_ROUTE,
+        layout: { 'line-cap': 'butt', 'line-join': 'round', visibility: p.landing ? 'visible' : 'none' },
+        paint: {
+          'line-color': '#ffffff',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1, 18, 2.2],
+          'line-dasharray': [2, 2.5],
         },
       })
     }
@@ -266,7 +328,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
           'circle-color': darkStyle ? 'rgba(30,34,33,0.88)' : 'rgba(255,255,255,0.92)',
           'circle-radius': ['step', ['get', 'point_count'], 17, 10, 21, 30, 26],
           'circle-stroke-width': 2,
-          'circle-stroke-color': '#10b981',
+          'circle-stroke-color': '#5b8def',
         },
       })
       map.addLayer({
@@ -275,7 +337,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
         source: SRC_PLACES,
         filter: ['has', 'point_count'],
         layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-font': LABEL_FONT, 'text-size': 13 },
-        paint: { 'text-color': darkStyle ? '#e5f5ef' : '#065f46' },
+        paint: { 'text-color': darkStyle ? '#e6eefc' : '#2459c0' },
       })
       map.addLayer({
         id: 'pins',
@@ -433,7 +495,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
       return
     }
     if (!pickMarker.current) {
-      pickMarker.current = new maplibre.Marker({ color: '#f97316', draggable: true })
+      pickMarker.current = new maplibre.Marker({ color: '#ef5350', draggable: true })
         .setLngLat([props.pickLocation.lon, props.pickLocation.lat])
         .addTo(map)
       pickMarker.current.on('dragend', () => {
@@ -444,6 +506,68 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
       pickMarker.current.setLngLat([props.pickLocation.lon, props.pickLocation.lat])
     }
   }, [props.pickLocation])
+
+  // ---- landing mode: static 3D city with a slow orbit and a dot travelling the route ---------
+  const tracer = useRef<maplibre.Marker | null>(null)
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    for (const h of HANDLERS) (props.landing ? map[h].disable() : map[h].enable())
+    if (map.getLayer('route-line')) {
+      map.setPaintProperty('route-line', 'line-color', props.landing ? '#111827' : '#5b8def')
+      map.setLayoutProperty('route-dash', 'visibility', props.landing ? 'visible' : 'none')
+    }
+    if (!props.landing) return
+    spinning.current = false
+    let raf = 0
+    let last = performance.now()
+    const orbit = (t: number) => {
+      const dt = t - last
+      last = t
+      if (!latest.current.reducedMotion && !map.isMoving()) map.setBearing(map.getBearing() + dt * 0.0016)
+      raf = requestAnimationFrame(orbit)
+    }
+    raf = requestAnimationFrame(orbit)
+    return () => cancelAnimationFrame(raf)
+  }, [props.landing])
+
+  useEffect(() => {
+    const map = mapRef.current
+    tracer.current?.remove()
+    tracer.current = null
+    const coords = props.route?.geometry.coordinates
+    if (!map || !props.landing || !coords || coords.length < 2) return
+    const el = document.createElement('div')
+    el.className = 'user-dot'
+    tracer.current = new maplibre.Marker({ element: el }).setLngLat(coords[0]).addTo(map)
+    // Cumulative lengths so the dot moves at constant speed.
+    const seg: number[] = [0]
+    for (let i = 1; i < coords.length; i++) {
+      const [x1, y1] = coords[i - 1]
+      const [x2, y2] = coords[i]
+      seg.push(seg[i - 1] + Math.hypot(x2 - x1, (y2 - y1) * 1.0))
+    }
+    const total = seg[seg.length - 1]
+    const DURATION = 9000
+    let raf = 0
+    const start = performance.now()
+    const step = (t: number) => {
+      const d = (((t - start) % DURATION) / DURATION) * total
+      let i = seg.findIndex((v) => v >= d)
+      if (i <= 0) i = 1
+      const f = (d - seg[i - 1]) / Math.max(1e-9, seg[i] - seg[i - 1])
+      const [x1, y1] = coords[i - 1]
+      const [x2, y2] = coords[i]
+      tracer.current?.setLngLat([x1 + (x2 - x1) * f, y1 + (y2 - y1) * f])
+      if (!latest.current.reducedMotion) raf = requestAnimationFrame(step)
+    }
+    raf = requestAnimationFrame(step)
+    return () => {
+      cancelAnimationFrame(raf)
+      tracer.current?.remove()
+      tracer.current = null
+    }
+  }, [props.landing, props.route])
 
   // ---- imperative camera API ----------------------------------------------
   useImperativeHandle(ref, () => ({
@@ -491,6 +615,19 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     },
     zoom() {
       return mapRef.current?.getZoom() ?? 0
+    },
+    enterApp(lat: number, lon: number) {
+      const map = mapRef.current
+      if (!map) return
+      programmaticMove.current = true
+      map.flyTo({
+        center: [lon, lat],
+        zoom: 14.2,
+        pitch: 0,
+        bearing: 0,
+        duration: latest.current.reducedMotion ? 0 : 2200,
+        essential: true,
+      })
     },
     showWholeGlobe() {
       const map = mapRef.current

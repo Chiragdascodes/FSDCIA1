@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { CircleCheck, Copy, Crosshair, ExternalLink, MapPin } from 'lucide-react'
+import { CheckCircle as CircleCheck, Copy, Crosshair, ArrowSquareOut as ExternalLink, MapPin } from '@phosphor-icons/react'
 import { copyText } from '../../js/events.js'
 import { addReport } from '../../js/storage.js'
 import { LIMITS, REPORT_TYPES, validateReport } from '../../js/validation.js'
@@ -78,6 +78,7 @@ export default function ReportView({ b, id }: { b: Beacon; id: string | null }) 
       return
     }
     addReport({ ...values, placeId: place?.id ?? null })
+    b.refreshReports()
     const typeLabel = REPORT_TYPES.find((t) => t.value === values.type)?.label ?? values.type
     const text = `[Beacon report] ${typeLabel}: ${values.placeName.trim()}\n\n${values.details.trim()}${
       place ? `\n\nOSM object: https://www.openstreetmap.org/${place.id}` : ''
@@ -93,8 +94,8 @@ export default function ReportView({ b, id }: { b: Beacon; id: string | null }) 
       <div className="pb-8">
         <ViewHeader title="Report saved" onClose={b.back} />
         <div className="space-y-4 px-4">
-          <div role="status" className="flex flex-col items-center rounded-2xl bg-emerald-500/10 p-5 text-center">
-            <CircleCheck className="mb-2 size-10 text-emerald-600" />
+          <div role="status" className="flex flex-col items-center rounded-2xl bg-accent-50 p-5 text-center">
+            <CircleCheck size={44} weight="fill" className="mb-2 text-emerald-500" />
             <p className="text-[16px] font-semibold">Thanks — your report is saved on this device.</p>
             <p className="label-2 mt-1 text-[13.5px]">
               To get it fixed on the real map, post it as an OpenStreetMap Note. Local mappers will see it.
@@ -253,7 +254,7 @@ export default function ReportView({ b, id }: { b: Beacon; id: string | null }) 
               errors.location ? 'border-red-500' : 'border-[var(--separator)]',
             )}
           >
-            <MapPin className="size-4 shrink-0 text-orange-500" />
+            <MapPin size={18} weight="fill" className="shrink-0 text-pin-500" />
             <span className="min-w-0 flex-1 tabular-nums">
               {values.lat !== null && values.lon !== null
                 ? `${values.lat.toFixed(5)}, ${values.lon.toFixed(5)}`
@@ -273,7 +274,7 @@ export default function ReportView({ b, id }: { b: Beacon; id: string | null }) 
           {errors.location ? (
             err('location')
           ) : (
-            <p className="label-3 mt-1 text-[12px]">Drag the orange pin, or tap the map, to adjust.</p>
+            <p className="label-3 mt-1 text-[12px]">Drag the red pin, or tap the map, to adjust.</p>
           )}
         </div>
 

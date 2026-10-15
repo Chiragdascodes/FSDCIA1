@@ -36,7 +36,7 @@ export const DEFAULT_SETTINGS = {
   units: 'metric',
   mode: 'foot',
   fallbackCity: 'bengaluru',
-  theme: 'auto',
+  theme: 'light',
   mapStyle: 'auto',
   globe: true,
 }
@@ -72,14 +72,15 @@ export function save(key, value) {
 
 /** @returns {Settings} */
 export function loadSettings() {
-  return { ...DEFAULT_SETTINGS, ...load('settings', {}) }
+  // v2: light theme is the default for everyone (older saved settings are ignored).
+  return { ...DEFAULT_SETTINGS, ...load('settings.v2', {}) }
 }
 
 /**
  * @param {Settings} s
  */
 export function saveSettings(s) {
-  return save('settings', s)
+  return save('settings.v2', s)
 }
 
 /**

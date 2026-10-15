@@ -1,4 +1,4 @@
-import { Accessibility, Clock, LoaderCircle, MapPinned, RotateCw, SearchX, SlidersHorizontal, Timer, WifiOff } from 'lucide-react'
+import { Wheelchair as Accessibility, Clock, CircleNotch as LoaderCircle, MapTrifold as MapPinned, ArrowClockwise as RotateCw, MagnifyingGlassMinus as SearchX, SlidersHorizontal, Timer, WifiSlash as WifiOff } from '@phosphor-icons/react'
 import { describeQuery } from '../../js/queryParser.js'
 import { formatDistance } from '../../js/geo.js'
 import type { Beacon, Filters } from '../../state/useBeacon'

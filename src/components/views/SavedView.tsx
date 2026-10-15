@@ -1,4 +1,4 @@
-import { Bookmark, X } from 'lucide-react'
+import { BookmarkSimple as Bookmark, X } from '@phosphor-icons/react'
 import { shortAddress } from '../../js/api.js'
 import { distanceMeters, formatDistance } from '../../js/geo.js'
 import { getOpenStatus } from '../../js/hours.js'

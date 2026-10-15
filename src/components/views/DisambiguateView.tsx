@@ -1,4 +1,4 @@
-import { ChevronRight, LocateFixed, MapPin } from 'lucide-react'
+import { CaretRight as ChevronRight, Crosshair as LocateFixed, MapPin } from '@phosphor-icons/react'
 import { localityLine } from '../../js/api.js'
 import { formatDistance } from '../../js/geo.js'
 import type { Beacon } from '../../state/useBeacon'

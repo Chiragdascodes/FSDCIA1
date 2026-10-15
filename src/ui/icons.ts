@@ -1,32 +1,37 @@
 import {
-  Banknote,
+  Basket,
+  Bank,
+  ChargingStation,
   Coffee,
-  Fuel,
-  Hospital,
+  FirstAidKit,
+  ForkKnife,
+  GasPump,
   MapPin,
   Pill,
-  PlugZap,
-  ShieldAlert,
-  ShoppingBasket,
+  ShieldCheck,
   Toilet,
-  UtensilsCrossed,
-  type LucideIcon,
-} from 'lucide-react'
+  type Icon,
+} from '@phosphor-icons/react'
 
-/** Lucide icon for each category id (names come from src/js/categories.js). */
-export const CATEGORY_ICONS: Record<string, LucideIcon> = {
+/**
+ * Phosphor icons (fill / duotone weights read like SF Symbols) for each category.
+ * Keys are the icon names stored in src/js/categories.js.
+ */
+export const CATEGORY_ICONS: Record<string, Icon> = {
   Pill,
-  Hospital,
-  Banknote,
+  Hospital: FirstAidKit,
+  Banknote: Bank,
   Toilet,
-  UtensilsCrossed,
+  UtensilsCrossed: ForkKnife,
   Coffee,
-  ShoppingBasket,
-  Fuel,
-  ShieldAlert,
-  PlugZap,
+  ShoppingBasket: Basket,
+  Fuel: GasPump,
+  ShieldAlert: ShieldCheck,
+  PlugZap: ChargingStation,
 }
 
-export function iconFor(iconName: string | undefined): LucideIcon {
+export function iconFor(iconName: string | undefined): Icon {
   return (iconName && CATEGORY_ICONS[iconName]) || MapPin
 }
+
+export type { Icon }

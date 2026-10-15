@@ -10,7 +10,7 @@ interface Props {
 
 /**
  * One-tap category search (HIG Maps: "offer a search feature combined with a way to filter by category").
- * A radio group: arrow keys move between chips, `change` runs the search.
+ * A radio group of white pills; `change` runs the search.
  */
 export default function CategoryChips({ active, onPick, glass }: Props) {
   return (
@@ -33,15 +33,13 @@ export default function CategoryChips({ active, onPick, glass }: Props) {
               />
               <span
                 className={cx(
-                  'glass-btn flex h-9 cursor-pointer items-center gap-1.5 rounded-full pr-3.5 pl-1.5 text-[13.5px] font-medium whitespace-nowrap',
+                  'glass-btn flex h-10 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-[14.5px] font-medium whitespace-nowrap',
                   'peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent-500',
-                  glass ? 'glass' : 'bg-[var(--fill)] hover:bg-[var(--fill-2)]',
-                  checked && '!bg-[var(--label)] !text-[var(--app-bg)]',
+                  glass ? 'glass glass-strong' : 'bg-[var(--fill)] hover:bg-accent-50',
+                  checked && '!bg-accent-600 !text-white',
                 )}
               >
-                <span className="grid size-6 place-items-center rounded-full text-white" style={{ background: c.color }}>
-                  <Icon className="size-3.5" strokeWidth={2.4} />
-                </span>
+                <Icon size={17} weight="fill" style={{ color: checked ? '#fff' : c.color }} />
                 {c.label}
               </span>
             </label>

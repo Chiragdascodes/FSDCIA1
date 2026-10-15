@@ -26,9 +26,9 @@ const SATELLITE: StyleSpecification = {
 }
 
 export const MAP_STYLES: Record<MapStyleId, { label: string; style: string | StyleSpecification; dark: boolean }> = {
-  light: { label: 'Standard', style: `${OPENFREEMAP}/liberty`, dark: false },
-  muted: { label: 'Muted', style: `${OPENFREEMAP}/positron`, dark: false },
   dark: { label: 'Dark', style: `${OPENFREEMAP}/dark`, dark: true },
+  muted: { label: 'Light', style: `${OPENFREEMAP}/positron`, dark: false },
+  light: { label: 'Basic', style: `${OPENFREEMAP}/liberty`, dark: false },
   satellite: { label: 'Satellite', style: SATELLITE, dark: true },
 }
 

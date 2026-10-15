@@ -18,7 +18,7 @@ function toMarkup(el: ReactElement): string {
 }
 
 /**
- * Builds a teardrop pin as an SVG string: category colour, white rim, white Lucide glyph.
+ * Builds a teardrop pin as an SVG string: category colour, white rim, white Phosphor glyph (fill weight).
  * `selected` pins are larger and get a soft halo (HIG Maps: clearly identify the selection).
  */
 function pinSvg(color: string, iconName: string | undefined, selected: boolean): { svg: string; w: number; h: number } {
@@ -26,7 +26,7 @@ function pinSvg(color: string, iconName: string | undefined, selected: boolean):
   const h = selected ? 66 : 48
   const r = w / 2 - 3
   const glyph = toMarkup(
-    createElement(iconFor(iconName), { color: '#ffffff', size: selected ? 22 : 17, strokeWidth: 2.3 }),
+    createElement(iconFor(iconName), { color: '#ffffff', size: selected ? 22 : 17, weight: 'fill' }),
   )
   const cx = w / 2
   const cy = r + 3

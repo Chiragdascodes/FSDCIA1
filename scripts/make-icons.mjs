@@ -1,5 +1,5 @@
 // Generates the PWA / Apple touch icons as PNGs without any image library:
-// the Beacon mark (emerald gradient tile + white map pin) is rasterised per pixel with
+// the Beacon mark (blue gradient tile + white map pin) is rasterised per pixel with
 // 4× supersampling and encoded with Node's built-in zlib.
 //
 //   node scripts/make-icons.mjs
@@ -47,9 +47,9 @@ function png(size, rgba) {
 }
 
 const mix = (a, b, t) => a + (b - a) * t
-const C1 = [0x34, 0xd3, 0x99]
-const C2 = [0x04, 0x78, 0x57]
-const DOT = [0x05, 0x96, 0x69]
+const C1 = [0x7a, 0xa7, 0xf5]
+const C2 = [0x2f, 0x6f, 0xdf]
+const DOT = [0x2f, 0x6f, 0xdf]
 
 /** Colour of a point in unit space (0..1), or null for transparent. */
 function sample(u, v, { maskable }) {
