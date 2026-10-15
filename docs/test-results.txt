@@ -1,0 +1,73 @@
+
+ RUN  v5.0.4 C:/Users/Igris/Documents/CIA 1 FSD
+
+ ✓ src/js/navigation.test.js > navigation > measures the route 1ms
+ ✓ src/js/navigation.test.js > navigation > computes bearings 0ms
+ ✓ src/js/navigation.test.js > navigation > finds the point and heading along the route 0ms
+ ✓ src/js/navigation.test.js > navigation > snaps a GPS fix onto the route 0ms
+ ✓ src/js/navigation.test.js > navigation > reports the next manoeuvre and remaining time 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > pharmacy near me → pharmacy around the user 3ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > Pharmacy Near Me → pharmacy around the user 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > medical shop near me → pharmacy around the user 1ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > chemist near my location → pharmacy around the user 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > nearby pharmacy → pharmacy around the user 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > pharmacy nearby → pharmacy around the user 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > pharmacy near by → pharmacy around the user 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > find the nearest pharmacy → pharmacy around the user 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > closest chemist → pharmacy around the user 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > where is a pharmacy around here → pharmacy around the user 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > a bare category means "around me" 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near me" (fixes benchmark E2) > maps everyday words to categories 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near <place>" (fixes benchmark E6) > splits category and anchor place, keeping original casing 1ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near <place>" (fixes benchmark E6) > atm on Church Street 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near <place>" (fixes benchmark E6) > hospital in Koramangala 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near <place>" (fixes benchmark E6) > toilets close to Cubbon Park 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near <place>" (fixes benchmark E6) > food at Indiranagar 100 Feet Road 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — "near <place>" (fixes benchmark E6) > handles a named place near another place 4ms
+ ✓ src/js/queryParser.test.js > parseQuery — filters > detects open now 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — filters > detects 24/7 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — filters > detects wheelchair accessible 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — plain places and edge cases > a plain place name is a place lookup 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — plain places and edge cases > does not match categories inside other words 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — plain places and edge cases > empty input 0ms
+ ✓ src/js/queryParser.test.js > parseQuery — plain places and edge cases > "near me" alone has nothing to look for 0ms
+ ✓ src/js/queryParser.test.js > describeQuery > builds a readable heading 0ms
+ ✓ src/js/helpers.test.js > geo > measures distance with haversine 1ms
+ ✓ src/js/helpers.test.js > geo > formats distances 0ms
+ ✓ src/js/helpers.test.js > geo > formats durations 0ms
+ ✓ src/js/helpers.test.js > geo > bbox contains the radius 0ms
+ ✓ src/js/helpers.test.js > geo > gives a compass direction 0ms
+ ✓ src/js/helpers.test.js > geo > validates coordinates 0ms
+ ✓ src/js/helpers.test.js > opening hours (fixes benchmark E3) > reads the exact tag shown raw on openstreetmap.org 19ms
+ ✓ src/js/helpers.test.js > opening hours (fixes benchmark E3) > warns when closing soon 1ms
+ ✓ src/js/helpers.test.js > opening hours (fixes benchmark E3) > says when a closed place opens 1ms
+ ✓ src/js/helpers.test.js > opening hours (fixes benchmark E3) > handles 24/7 0ms
+ ✓ src/js/helpers.test.js > opening hours (fixes benchmark E3) > is honest when hours are missing or invalid 5ms
+ ✓ src/js/helpers.test.js > opening hours (fixes benchmark E3) > builds a 7-day table starting today 16ms
+ ✓ src/js/helpers.test.js > validation > search 1ms
+ ✓ src/js/helpers.test.js > validation > accepts a good report 0ms
+ ✓ src/js/helpers.test.js > validation > flags every bad field with a message 0ms
+ ✓ src/js/helpers.test.js > validation > accepts email or phone as contact 0ms
+ ✓ src/js/helpers.test.js > validation > rejects low-effort details 0ms
+ ✓ src/js/helpers.test.js > validation > settings 0ms
+ ✓ src/js/helpers.test.js > disambiguation (fixes benchmark E6) > ranks the nearest first and auto-picks the clear winner 1ms
+ ✓ src/js/helpers.test.js > disambiguation (fixes benchmark E6) > asks when the same street name exists twice in the same city 0ms
+ ✓ src/js/helpers.test.js > disambiguation (fixes benchmark E6) > asks when two same-named places are similarly close but apart 0ms
+ ✓ src/js/helpers.test.js > disambiguation (fixes benchmark E6) > asks when every match is in another city 0ms
+ ✓ src/js/helpers.test.js > disambiguation (fixes benchmark E6) > asks when the user location is unknown 0ms
+ ✓ src/js/helpers.test.js > disambiguation (fixes benchmark E6) > ignores candidates that do not contain the words typed, and prefers exact names 0ms
+ ✓ src/js/helpers.test.js > categories > finds categories by synonym, longest first 2ms
+ ✓ src/js/helpers.test.js > categories > maps OSM tags back to categories 0ms
+ ✓ src/js/helpers.test.js > api > parses JSON responses 4ms
+ ✓ src/js/helpers.test.js > api > maps 429 to a rate-limit error 1ms
+ ✓ src/js/helpers.test.js > api > maps invalid JSON to a parse error 0ms
+ ✓ src/js/helpers.test.js > api > times out slow requests 36ms
+ ✓ src/js/helpers.test.js > api > maps network failures 0ms
+ ✓ src/js/helpers.test.js > api > merges fast and rich results by OSM id 0ms
+ ✓ src/js/helpers.test.js > api > describes OSRM steps in plain English 0ms
+
+ Test Files  3 passed (3)
+      Tests  64 passed (64)
+   Start at  15:15:39
+   Duration  1.34s (environment 92%, tests 3%, import 3%, transform 1%)
+

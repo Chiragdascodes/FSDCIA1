@@ -656,6 +656,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
       spinning.current = false
       programmaticMove.current = true
       // Smoothly turn the camera towards the heading (shortest way round).
+      if (map.isMoving()) map.stop() // never fight an in-flight animation
       const current = map.getBearing()
       const delta = ((heading - current + 540) % 360) - 180
       map.jumpTo({ center: [lon, lat], bearing: current + delta * 0.12, zoom, pitch })
