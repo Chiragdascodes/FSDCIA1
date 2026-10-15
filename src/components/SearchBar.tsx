@@ -250,7 +250,7 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar(p, ref) 
       {showList && (
         <Glass
           variant="strong"
-          className="absolute inset-x-0 top-[calc(100%+8px)] z-30 max-h-[min(60vh,420px)] overflow-y-auto rounded-3xl p-1.5 thin-scrollbar"
+          className="glass-menu absolute inset-x-0 top-[calc(100%+8px)] z-30 max-h-[min(60vh,420px)] overflow-y-auto rounded-3xl p-1.5 thin-scrollbar"
         >
           <ul id={listId} role="listbox" aria-label="Search suggestions">
             {!p.value.trim() && (

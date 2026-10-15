@@ -132,8 +132,10 @@ export default function App() {
       const sel = b.placesById.get(b.selectedId)
       if (sel) list.push(sel)
     }
-    return b.view.name === 'disambiguate' ? [] : list
-  }, [b.visibleResults, b.selectedId, b.placesById, b.view.name])
+    // While asking "Which MG Road?", the candidates themselves are the pins (tap one to choose).
+    if (b.view.name === 'disambiguate') return b.anchorOptions.map((p) => ({ ...p, categoryId: null }))
+    return list
+  }, [b.visibleResults, b.selectedId, b.placesById, b.view.name, b.anchorOptions])
 
   const sheetHeight = detent === 'peek' ? 148 : detent === 'half' ? window.innerHeight * 0.5 : window.innerHeight - 104
   const padding = useMemo(
@@ -236,7 +238,13 @@ export default function App() {
         padding={padding}
         reducedMotion={reducedMotion}
         pickLocation={b.pickLocation}
-        onSelect={(id) => b.selectPlace(id, { fly: false })}
+        onSelect={(id) => {
+          if (b.view.name === 'disambiguate') {
+            const option = b.anchorOptions.find((o) => o.id === id)
+            if (option) return b.chooseAnchor(option)
+          }
+          b.selectPlace(id, { fly: false })
+        }}
         onPick={(lat, lon) => b.setPickLocation({ lat, lon })}
         onMoveEnd={(c, z, byUser) => {
           setZoom(z)
