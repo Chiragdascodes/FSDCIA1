@@ -10,7 +10,7 @@ export type ParsedQuery = import('./js/queryParser.js').ParsedQuery
 export type Settings = import('./js/storage.js').Settings
 export type SavedPlace = import('./js/storage.js').SavedPlace
 export type OpenStatus = import('./js/hours.js').OpenStatus
-export type TravelMode = 'foot' | 'bike' | 'car'
+export type TravelMode = 'foot' | 'bike' | 'moto' | 'car'
 
 export interface LatLon {
   lat: number

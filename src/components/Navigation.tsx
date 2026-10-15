@@ -11,6 +11,7 @@ import {
   CheckCircle,
   Crosshair,
   FlagCheckered,
+  Motorcycle,
   NavigationArrow,
   Pause,
   PersonSimpleWalk,
@@ -50,8 +51,8 @@ function TurnIcon({ step, size }: { step: RouteStep | undefined; size: number })
   return <ArrowUp {...p} />
 }
 
-const MODE_ICON = { foot: PersonSimpleWalk, bike: Bicycle, car: Car }
-const MODE_LABEL = { foot: 'Walking', bike: 'Cycling', car: 'Driving' }
+const MODE_ICON = { foot: PersonSimpleWalk, bike: Bicycle, moto: Motorcycle, car: Car }
+const MODE_LABEL = { foot: 'Walking', bike: 'Cycling', moto: 'Riding', car: 'Driving' }
 
 /**
  * Full-screen turn-by-turn navigation (like Google Maps):

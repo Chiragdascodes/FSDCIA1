@@ -29,13 +29,13 @@ export interface BeaconMapHandle {
   /** Navigation: move the follow-camera (called every animation frame). */
   navFrame(lon: number, lat: number, heading: number, zoom: number, pitch: number): void
   /** Navigation: show/move/hide the direction marker (style depends on travel mode). */
-  navMarker(pos: { lon: number; lat: number } | null, heading: number, mode: 'foot' | 'bike' | 'car'): void
+  navMarker(pos: { lon: number; lat: number } | null, heading: number, mode: 'foot' | 'bike' | 'moto' | 'car'): void
   /** Navigation finished: flatten the camera again. */
   exitNav(): void
 }
 
 /** Direction marker per travel mode: chevron for car/bike, dot + heading beam when walking. */
-function navMarkerElement(mode: 'foot' | 'bike' | 'car'): HTMLElement {
+function navMarkerElement(mode: 'foot' | 'bike' | 'moto' | 'car'): HTMLElement {
   const el = document.createElement('div')
   el.setAttribute('role', 'img')
   el.setAttribute('aria-label', 'You (navigating)')
@@ -45,7 +45,7 @@ function navMarkerElement(mode: 'foot' | 'bike' | 'car'): HTMLElement {
       <path d="M32 32 L14 2 A34 34 0 0 1 50 2 Z" fill="url(#beam)"/>
       <circle cx="32" cy="32" r="11" fill="#2f6fdf" stroke="#fff" stroke-width="4"/></svg>`
   } else {
-    const size = mode === 'car' ? 54 : 44
+    const size = mode === 'car' ? 54 : mode === 'moto' ? 48 : 44
     el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 48 48" style="filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))">
       <circle cx="24" cy="24" r="22" fill="#fff"/>
       <path d="M24 7 L37 37 L24 30 L11 37 Z" fill="#2f6fdf" stroke="#2459c0" stroke-width="1.5" stroke-linejoin="round"/></svg>`
@@ -133,7 +133,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
   const programmaticMove = useRef(false)
   const handlersAttached = useRef(false)
   const styleLabels = useRef<string[]>([])
-  const navMarkerRef = useRef<{ marker: maplibre.Marker; mode: 'foot' | 'bike' | 'car' } | null>(null)
+  const navMarkerRef = useRef<{ marker: maplibre.Marker; mode: 'foot' | 'bike' | 'moto' | 'car' } | null>(null)
 
   // ---- create the map once -------------------------------------------------
   useEffect(() => {

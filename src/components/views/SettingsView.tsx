@@ -111,6 +111,7 @@ export default function SettingsView({ b }: { b: Beacon }) {
             options={[
               { value: 'foot', label: 'Walk' },
               { value: 'bike', label: 'Cycle' },
+              { value: 'moto', label: 'Moto' },
               { value: 'car', label: 'Drive' },
             ]}
           />

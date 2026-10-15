@@ -603,14 +603,17 @@ export function mergePlaces(fast, rich) {
  * @property {number} duration  seconds
  * @property {{ type: 'LineString', coordinates: [number, number][] }} geometry
  * @property {RouteStep[]} steps
- * @property {'foot' | 'bike' | 'car'} mode
+ * @property {'foot' | 'bike' | 'moto' | 'car'} mode
  */
 
-const OSRM_PROFILE = { foot: 'routed-foot', bike: 'routed-bike', car: 'routed-car' }
+// FOSSGIS runs foot, bike and car profiles. Motorbikes use the car network; in city traffic they are
+// faster than cars (lane filtering), so the estimated time is scaled down.
+const OSRM_PROFILE = { foot: 'routed-foot', bike: 'routed-bike', moto: 'routed-car', car: 'routed-car' }
+const TIME_FACTOR = { foot: 1, bike: 1, moto: 0.8, car: 1 }
 
 /**
  * Turn-by-turn route between two points using the FOSSGIS OSRM servers (same as openstreetmap.org).
- * @param {'foot' | 'bike' | 'car'} mode
+ * @param {'foot' | 'bike' | 'moto' | 'car'} mode
  * @param {{ lat: number, lon: number }} from
  * @param {{ lat: number, lon: number }} to
  * @param {AbortSignal} [signal]
@@ -630,13 +633,13 @@ export async function getRoute(mode, from, to, signal) {
     leg.steps.map((/** @type {any} */ s) => ({
       instruction: describeStep(s),
       distance: s.distance,
-      duration: s.duration,
+      duration: s.duration * TIME_FACTOR[mode],
       location: s.maneuver.location,
       maneuver: s.maneuver.type,
       modifier: s.maneuver.modifier ?? '',
     })),
   )
-  return { distance: r.distance, duration: r.duration, geometry: r.geometry, steps, mode }
+  return { distance: r.distance, duration: r.duration * TIME_FACTOR[mode], geometry: r.geometry, steps, mode }
 }
 
 /**

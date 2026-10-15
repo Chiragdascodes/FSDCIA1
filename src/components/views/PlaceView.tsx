@@ -28,7 +28,7 @@ import { useNow } from '../../ui/hooks'
 import { iconFor } from '../../ui/icons'
 import { EmptyState, OpenBadge, ViewHeader } from '../common'
 
-const MODE_LABEL = { foot: 'walk', bike: 'by bicycle', car: 'by car' } as const
+const MODE_LABEL = { foot: 'walk', bike: 'by bicycle', moto: 'by motorbike', car: 'by car' } as const
 
 function website(p: Place) {
   const w = p.tags.website || p.tags['contact:website'] || p.tags.url

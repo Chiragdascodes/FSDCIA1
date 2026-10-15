@@ -124,7 +124,7 @@ export function validateSettings(v, cityIds) {
   else if (r < LIMITS.radiusMin || r > LIMITS.radiusMax)
     errors.radius = `Choose between ${LIMITS.radiusMin / 1000} km and ${LIMITS.radiusMax / 1000} km.`
   if (!['metric', 'imperial'].includes(v.units)) errors.units = 'Choose metric or imperial.'
-  if (!['foot', 'bike', 'car'].includes(v.mode)) errors.mode = 'Choose a travel mode.'
+  if (!['foot', 'bike', 'moto', 'car'].includes(v.mode)) errors.mode = 'Choose a travel mode.'
   if (!cityIds.includes(v.fallbackCity)) errors.fallbackCity = 'Choose a city from the list.'
   return { valid: Object.keys(errors).length === 0, errors }
 }

@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowSquareOut, ArrowsDownUp, CaretLeft, DotsThree, MapPin } from '@phosphor-icons/react'
+import { ArrowSquareOut, ArrowsDownUp, Bicycle, Car, CaretLeft, DotsThree, MapPin, Motorcycle, PersonSimpleWalk, type Icon } from '@phosphor-icons/react'
 import { formatDistance, formatDuration } from '../js/geo.js'
 import type { Beacon } from '../state/useBeacon'
 import type { TravelMode } from '../types'
 import { cx, Glass } from '../ui/Glass'
 
-const MODES: { id: TravelMode; label: string }[] = [
-  { id: 'foot', label: 'Walking' },
-  { id: 'bike', label: 'Bicycle' },
-  { id: 'car', label: 'Car' },
+const MODES: { id: TravelMode; label: string; icon: Icon }[] = [
+  { id: 'foot', label: 'Walking', icon: PersonSimpleWalk },
+  { id: 'bike', label: 'Bicycle', icon: Bicycle },
+  { id: 'moto', label: 'Motorbike', icon: Motorcycle },
+  { id: 'car', label: 'Car', icon: Car },
 ]
 
 /**
  * Top route card (third screen of the reference UI): "Your place" → destination, swap button,
- * and Distance / Time / Transport. Tapping Transport cycles walking → bicycle → car.
+ * a Google-Maps-style travel mode switcher (walk / cycle / motorbike / car) and distance + time.
  */
 export default function RouteCard({ b, id }: { b: Beacon; id: string }) {
   const [menu, setMenu] = useState(false)
@@ -23,7 +24,6 @@ export default function RouteCard({ b, id }: { b: Beacon; id: string }) {
   const fromLabel = b.user ? 'Your place' : b.anchor?.label ?? 'Search centre'
   const toLabel = place?.name ?? 'Destination'
   const [top, bottom] = b.routeReversed ? [toLabel, fromLabel] : [fromLabel, toLabel]
-  const nextMode = MODES[(MODES.findIndex((m) => m.id === b.mode) + 1) % MODES.length]
   const units = b.settings.units
 
   useEffect(() => {
@@ -110,30 +110,43 @@ export default function RouteCard({ b, id }: { b: Beacon; id: string }) {
         </div>
       </div>
 
-      <dl className="mt-3 grid grid-cols-3 gap-2 px-1 text-center">
+      {/* Travel mode switcher (like Google Maps): icon pills, the selected one shows its time. */}
+      <div role="radiogroup" aria-label="Travel mode" className="mt-3 grid grid-cols-4 gap-1.5 rounded-full bg-[var(--fill)] p-1">
+        {MODES.map((m) => {
+          const on = b.mode === m.id
+          const Icon = m.icon
+          return (
+            <button
+              key={m.id}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              aria-label={m.label}
+              title={m.label}
+              onClick={() => !on && b.directions(id, m.id, b.routeReversed)}
+              className={cx(
+                'glass-btn flex h-10 items-center justify-center gap-1.5 rounded-full text-[13px] font-semibold transition-colors',
+                on ? 'bg-accent-600 text-white shadow-[0_6px_14px_-6px_rgb(47_111_223/0.9)]' : 'text-[var(--label-2)] hover:text-accent-600',
+              )}
+            >
+              <Icon size={20} weight={on ? 'fill' : 'regular'} />
+              {on && (r ? formatDuration(r.duration) : b.routeStatus === 'loading' ? '…' : '')}
+            </button>
+          )
+        })}
+      </div>
+
+      <dl className="mt-2.5 grid grid-cols-2 gap-2 px-1 text-center">
         <div>
           <dt className="label-2 text-[12.5px]">Distance</dt>
-          <dd className="font-display mt-0.5 text-[21px] font-semibold tabular-nums">
+          <dd className="font-display mt-0.5 text-[20px] font-semibold tabular-nums">
             {r ? formatDistance(r.distance, units) : b.routeStatus === 'loading' ? '…' : '—'}
           </dd>
         </div>
         <div>
-          <dt className="label-2 text-[12.5px]">Time</dt>
-          <dd className="font-display mt-0.5 text-[21px] font-semibold tabular-nums">
+          <dt className="label-2 text-[12.5px]">{MODES.find((m) => m.id === b.mode)?.label}</dt>
+          <dd className="font-display mt-0.5 text-[20px] font-semibold text-accent-600 tabular-nums">
             {r ? formatDuration(r.duration) : b.routeStatus === 'loading' ? '…' : '—'}
-          </dd>
-        </div>
-        <div>
-          <dt className="label-2 text-[12.5px]">Transport</dt>
-          <dd>
-            <button
-              type="button"
-              onClick={() => b.directions(id, nextMode.id, b.routeReversed)}
-              aria-label={`Transport: ${MODES.find((m) => m.id === b.mode)?.label}. Tap to switch to ${nextMode.label}`}
-              className={cx('font-display mt-0.5 text-[21px] font-semibold text-accent-500 hover:text-accent-600')}
-            >
-              {MODES.find((m) => m.id === b.mode)?.label}
-            </button>
           </dd>
         </div>
       </dl>

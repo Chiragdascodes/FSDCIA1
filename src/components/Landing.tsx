@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { ArrowRight, GithubLogo as Github, Pill, X } from '@phosphor-icons/react'
+import { ArrowRight, GithubLogo as Github, X } from '@phosphor-icons/react'
 import { formatDuration } from '../js/geo.js'
 import type { Route } from '../types'
 import { cx, Glass } from '../ui/Glass'
@@ -64,11 +64,24 @@ export default function Landing({ route, reducedMotion, onExplore }: Props) {
 
   return (
     <motion.div
-      className="pointer-events-none absolute inset-0 z-40 flex h-dvh flex-col overflow-hidden"
+      className="absolute inset-0 z-40 flex h-dvh flex-col overflow-hidden bg-[radial-gradient(120%_80%_at_50%_0%,#ffffff_0%,#f4f6fa_55%,#e9eef6_100%)]"
       exit={{ opacity: 0, transition: { duration: 0.6 } }}
     >
-      {/* White sky fading into the 3D map */}
-      <div className="absolute inset-x-0 top-0 h-[64%] bg-gradient-to-b from-[#f4f6fa] via-[#f4f6fa]/96 via-70% to-transparent" />
+      {/* 3D city rendered in Blender (design/beacon-city.blend), floating slowly */}
+      <motion.img
+        src={`${import.meta.env.BASE_URL}landing/city.webp`}
+        alt="Illustrated 3D city with a walking route to a pharmacy"
+        draggable={false}
+        className="pointer-events-none absolute top-[50vh] left-1/2 w-[175vw] max-w-none -translate-x-[52%] select-none md:top-[38vh] md:w-[min(1600px,112vw)]"
+        initial={reducedMotion ? false : { opacity: 0, y: 40 }}
+        animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: [0, -10, 0] }}
+        transition={
+          reducedMotion
+            ? { duration: 0 }
+            : { opacity: { duration: 1.2 }, y: { duration: 9, repeat: Infinity, ease: 'easeInOut' } }
+        }
+      />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[44%] bg-gradient-to-b from-[#f9fafc] via-[#f9fafc]/70 to-transparent" />
 
       {/* Header */}
       <header className="pointer-events-auto relative flex items-center justify-between px-5 pt-5 md:px-12 md:pt-8">
@@ -141,19 +154,25 @@ export default function Landing({ route, reducedMotion, onExplore }: Props) {
               animate: { opacity: 1, y: 0, scale: 1 },
               transition: { duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] as const },
             })}
-        className="pointer-events-auto absolute right-[6%] bottom-[16%] hidden w-[230px] md:block lg:right-[17%]"
+        className="pointer-events-auto absolute right-[5%] bottom-[10%] hidden w-[270px] md:block lg:right-[10%]"
       >
         <Glass variant="strong" className="rounded-[22px] p-4">
-          <p className="text-[13px] font-semibold text-[#14161c]">Nearest pharmacy</p>
-          <p className="mt-2 text-[11px] text-[#7a8090]">Walking time</p>
-          <div className="mt-0.5 flex items-end justify-between">
-            <p className="font-display text-[30px] leading-none font-bold text-[#14161c]">
-              {minutes.replace(' min', '')}
-              <span className="ml-1 text-[12px] font-medium text-[#7a8090]">min</span>
-            </p>
-            <span className="grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-[0_10px_20px_-10px_rgb(5_150_105/0.8)]">
-              <Pill className="size-7" />
-            </span>
+          <p className="text-[13px] font-semibold text-[#14161c]">Your trip</p>
+          <p className="text-[11px] text-[#7a8090]">to the nearest pharmacy</p>
+          <div className="mt-2 flex items-end justify-between gap-2">
+            <div>
+              <p className="text-[11px] text-[#7a8090]">Arriving in</p>
+              <p className="font-display text-[30px] leading-none font-bold text-[#14161c]">
+                {minutes.replace(' min', '')}
+                <span className="ml-1 text-[12px] font-medium text-[#7a8090]">min</span>
+              </p>
+            </div>
+            <img
+              src={`${import.meta.env.BASE_URL}landing/car.webp`}
+              alt="3D car"
+              className="-mr-3 -mb-2 w-[150px] drop-shadow-[0_14px_14px_rgba(30,50,90,0.25)]"
+              draggable={false}
+            />
           </div>
           <p className="mt-2 text-[12px] font-semibold text-emerald-600">● Open now · closes 23:00</p>
           <div className="relative mt-4 h-1.5 rounded-full bg-[#e8ebf1]">

@@ -23,7 +23,7 @@ export const CITIES = [
  * @typedef {Object} Settings
  * @property {number} radius              metres
  * @property {'metric' | 'imperial'} units
- * @property {'foot' | 'bike' | 'car'} mode
+ * @property {'foot' | 'bike' | 'moto' | 'car'} mode
  * @property {string} fallbackCity        id from CITIES
  * @property {'auto' | 'light' | 'dark'} theme
  * @property {'auto' | 'light' | 'dark' | 'muted' | 'satellite'} mapStyle

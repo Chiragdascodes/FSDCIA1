@@ -133,11 +133,12 @@ export function progress(route, idx, along) {
 }
 
 /** Typical speeds (m/s) for the simulated trip, sped up 6× so a demo finishes quickly. */
-export const SIM_SPEED = { foot: 1.4 * 6, bike: 4.5 * 6, car: 9 * 6 }
+export const SIM_SPEED = { foot: 1.4 * 6, bike: 4.5 * 6, moto: 8 * 6, car: 9 * 6 }
 
 /** Camera per travel mode (Google-Maps-like: closer and flatter when walking, further when driving). */
 export const NAV_CAMERA = {
   foot: { zoom: 18.2, pitch: 60 },
+  moto: { zoom: 17.1, pitch: 67 },
   bike: { zoom: 17.5, pitch: 65 },
   car: { zoom: 16.8, pitch: 70 },
 }

@@ -6,7 +6,7 @@
 const EARTH_RADIUS_M = 6_371_008.8
 
 /** Average speeds (m/min) for the quick estimates shown in result rows. */
-export const SPEED_M_PER_MIN = { foot: 80, bike: 250, car: 400 }
+export const SPEED_M_PER_MIN = { foot: 80, bike: 250, moto: 500, car: 400 }
 
 /**
  * @typedef {{ lat: number, lon: number }} LatLon
@@ -80,7 +80,7 @@ export function formatDuration(seconds) {
 /**
  * Rough travel time used before a real route is requested.
  * @param {number} meters
- * @param {'foot' | 'bike' | 'car'} [mode]
+ * @param {'foot' | 'bike' | 'moto' | 'car'} [mode]
  * @returns {number} seconds
  */
 export function estimateSeconds(meters, mode = 'foot') {
