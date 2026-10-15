@@ -7,6 +7,11 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],
+  // Pre-bundle everything up front so the dev server never re-optimises mid-session
+  // (which can load two copies of React).
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-dom/client', 'react-dom/server', 'motion/react', 'lucide-react', 'opening_hours'],
+  },
   build: {
     target: 'es2022',
     chunkSizeWarningLimit: 1600,

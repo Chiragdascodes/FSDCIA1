@@ -134,19 +134,34 @@ describe('disambiguation (fixes benchmark E6)', () => {
   const kochi = place('way/5', 'MG Road', 'Kochi', 9.97, 76.28)
 
   it('ranks the nearest first and auto-picks the clear winner', () => {
-    const r = rankAnchors([kolkata, mumbai, blr, blr2, kochi], user)
+    const r = rankAnchors([kolkata, mumbai, blr, blr2, kochi], user, 'MG Road')
     expect(r.options.map((o) => o.address.city)).toEqual(['Bengaluru', 'Kochi', 'Mumbai', 'Kolkata'])
     expect(r.auto?.address.city).toBe('Bengaluru')
   })
-  it('asks when two candidates are similarly close', () => {
+  it('asks when the same street name exists twice in the same city', () => {
     const near1 = place('way/6', 'Church Street', 'Bengaluru', 12.975, 77.605)
     const near2 = place('way/7', 'Church Street', 'Bengaluru', 12.93, 77.62)
-    const r = rankAnchors([near1, near2], user)
+    const r = rankAnchors([near2, near1], user, 'Church Street')
     expect(r.auto).toBeNull()
-    expect(r.options).toHaveLength(2)
+    expect(r.options.map((o) => o.id)).toEqual(['way/6', 'way/7'])
+  })
+  it('asks when two same-named places are similarly close but apart', () => {
+    const a = place('way/8', 'Park Road', 'Bengaluru', 12.985, 77.6)
+    const b = place('way/9', 'Park Road', 'Bengaluru', 12.96, 77.575)
+    expect(rankAnchors([a, b], user, 'Park Road').auto).toBeNull()
+  })
+  it('asks when every match is in another city', () => {
+    expect(rankAnchors([kolkata, mumbai], user, 'MG Road').auto).toBeNull()
   })
   it('asks when the user location is unknown', () => {
-    expect(rankAnchors([kolkata, mumbai], null).auto).toBeNull()
+    expect(rankAnchors([kolkata, mumbai], null, 'MG Road').auto).toBeNull()
+  })
+  it('ignores candidates that do not contain the words typed, and prefers exact names', () => {
+    const busStop = place('node/10', 'Anil Kumble Circle', 'Bengaluru', 12.9745, 77.6)
+    const metro = place('node/11', 'MG Road Metro Station', 'Bengaluru', 12.9755, 77.6067)
+    const r = rankAnchors([busStop, metro, blr], user, 'MG Road')
+    expect(r.options.map((o) => o.name)).toEqual(['MG Road', 'MG Road Metro Station'])
+    expect(r.auto?.name).toBe('MG Road')
   })
 })
 

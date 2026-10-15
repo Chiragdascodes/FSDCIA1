@@ -21,7 +21,7 @@
  * @property {string} icon        Lucide icon name (resolved in the UI layer).
  * @property {string} color       Pin colour (hex).
  * @property {OsmTag[]} tags      OSM tags that belong to this category.
- * @property {string} nominatim   Special phrase Nominatim understands for bounded category search.
+ * @property {string[]} nominatim Special phrases Nominatim understands for bounded category search.
  * @property {string[]} synonyms  Lower-case words/phrases that mean this category.
  */
 
@@ -38,7 +38,7 @@ export const CATEGORIES = [
       { key: 'healthcare', value: 'pharmacy' },
       { key: 'shop', value: 'chemist' },
     ],
-    nominatim: 'pharmacy',
+    nominatim: ['pharmacy'],
     synonyms: ['pharmacy', 'pharmacies', 'chemist', 'chemists', 'medical shop', 'medical store', 'medical', 'medicals',
       'medicine', 'medicines', 'drugstore', 'drug store', 'apothecary', 'tablets'],
   },
@@ -54,7 +54,7 @@ export const CATEGORIES = [
       { key: 'amenity', value: 'doctors' },
       { key: 'healthcare', value: 'hospital' },
     ],
-    nominatim: 'hospital',
+    nominatim: ['hospital', 'clinic'],
     synonyms: ['hospital', 'hospitals', 'clinic', 'clinics', 'doctor', 'doctors', 'emergency', 'er', 'a&e', 'casualty',
       'health centre', 'health center', 'nursing home', 'urgent care'],
   },
@@ -68,7 +68,7 @@ export const CATEGORIES = [
       { key: 'amenity', value: 'atm' },
       { key: 'amenity', value: 'bank' },
     ],
-    nominatim: 'atm',
+    nominatim: ['atm', 'bank'],
     synonyms: ['atm', 'atms', 'cash', 'cash machine', 'cashpoint', 'bank', 'banks', 'money', 'withdraw', 'withdraw cash'],
   },
   {
@@ -78,7 +78,7 @@ export const CATEGORIES = [
     icon: 'Toilet',
     color: '#8b5cf6',
     tags: [{ key: 'amenity', value: 'toilets' }],
-    nominatim: 'toilets',
+    nominatim: ['toilets'],
     synonyms: ['toilet', 'toilets', 'washroom', 'washrooms', 'restroom', 'restrooms', 'bathroom', 'loo', 'wc',
       'public toilet', 'lavatory'],
   },
@@ -93,7 +93,7 @@ export const CATEGORIES = [
       { key: 'amenity', value: 'fast_food' },
       { key: 'amenity', value: 'food_court' },
     ],
-    nominatim: 'restaurant',
+    nominatim: ['restaurant', 'fast food'],
     synonyms: ['food', 'restaurant', 'restaurants', 'eat', 'place to eat', 'places to eat', 'dinner', 'lunch',
       'breakfast', 'fast food', 'biryani', 'meal', 'meals', 'dhaba', 'hotel to eat', 'mess', 'canteen'],
   },
@@ -104,7 +104,7 @@ export const CATEGORIES = [
     icon: 'Coffee',
     color: '#a16207',
     tags: [{ key: 'amenity', value: 'cafe' }],
-    nominatim: 'cafe',
+    nominatim: ['cafe'],
     synonyms: ['cafe', 'cafes', 'café', 'cafés', 'coffee', 'coffee shop', 'tea', 'chai', 'tea stall', 'bakery'],
   },
   {
@@ -118,7 +118,7 @@ export const CATEGORIES = [
       { key: 'shop', value: 'convenience' },
       { key: 'shop', value: 'grocery' },
     ],
-    nominatim: 'supermarket',
+    nominatim: ['supermarket', 'convenience store'],
     synonyms: ['grocery', 'groceries', 'supermarket', 'supermarkets', 'kirana', 'convenience store', 'general store',
       'provision store', 'store', 'mart'],
   },
@@ -129,7 +129,7 @@ export const CATEGORIES = [
     icon: 'Fuel',
     color: '#eab308',
     tags: [{ key: 'amenity', value: 'fuel' }],
-    nominatim: 'fuel',
+    nominatim: ['fuel'],
     synonyms: ['fuel', 'petrol', 'petrol pump', 'petrol bunk', 'gas station', 'gas', 'diesel', 'filling station'],
   },
   {
@@ -139,7 +139,7 @@ export const CATEGORIES = [
     icon: 'ShieldAlert',
     color: '#2563eb',
     tags: [{ key: 'amenity', value: 'police' }],
-    nominatim: 'police',
+    nominatim: ['police'],
     synonyms: ['police', 'police station', 'cops', 'thana', 'police help'],
   },
   {
@@ -149,7 +149,7 @@ export const CATEGORIES = [
     icon: 'PlugZap',
     color: '#14b8a6',
     tags: [{ key: 'amenity', value: 'charging_station' }],
-    nominatim: 'charging station',
+    nominatim: ['charging station'],
     synonyms: ['ev', 'ev charging', 'charging', 'charging station', 'charger', 'ev charger', 'electric charging'],
   },
 ]

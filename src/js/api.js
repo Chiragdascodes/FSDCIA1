@@ -482,7 +482,10 @@ export async function lookupByIds(ids, signal) {
 }
 
 /**
- * FAST pass: bounded Nominatim category search (~1.5 s). Returns places with tags from `extratags`.
+ * FAST pass: bounded Nominatim category search (~1.5 s per phrase). Results include `extratags`
+ * (opening_hours, phone, wheelchair, website…), so they are complete enough to show immediately.
+ * Categories with sub-types ("hospital" + "clinic") run one query per phrase; the Nominatim queue
+ * keeps them to 1 request/second.
  * @param {import('./categories.js').Category} category
  * @param {{ lat: number, lon: number }} center
  * @param {number} radius metres
@@ -490,7 +493,12 @@ export async function lookupByIds(ids, signal) {
  * @returns {Promise<Place[]>}
  */
 export async function searchCategoryFast(category, center, radius, signal) {
-  const places = await geocode(category.nominatim, { near: center, radius, bounded: true, limit: 40, signal })
+  const settled = await Promise.allSettled(
+    category.nominatim.map((phrase) => geocode(phrase, { near: center, radius, bounded: true, limit: 40, signal })),
+  )
+  const ok = settled.filter((s) => s.status === 'fulfilled')
+  if (!ok.length) throw /** @type {PromiseRejectedResult} */ (settled[0]).reason
+  const places = dedupe(ok.flatMap((s) => /** @type {PromiseFulfilledResult<Place[]>} */ (s).value))
   return withinRadius(
     places.filter((p) => p.categoryId === category.id),
     center,
