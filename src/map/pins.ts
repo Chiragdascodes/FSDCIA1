@@ -1,10 +1,21 @@
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
+import { createElement, type ReactElement } from 'react'
+import { flushSync } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import type { Map as MapLibreMap } from 'maplibre-gl'
 import { CATEGORIES } from '../js/categories.js'
 import { iconFor } from '../ui/icons'
 
 const PIXEL_RATIO = 2
+
+/** Renders a React element to an HTML string with the client renderer (avoids shipping react-dom/server). */
+function toMarkup(el: ReactElement): string {
+  const host = document.createElement('div')
+  const root = createRoot(host)
+  flushSync(() => root.render(el))
+  const html = host.innerHTML
+  root.unmount()
+  return html
+}
 
 /**
  * Builds a teardrop pin as an SVG string: category colour, white rim, white Lucide glyph.
@@ -14,7 +25,7 @@ function pinSvg(color: string, iconName: string | undefined, selected: boolean):
   const w = selected ? 52 : 38
   const h = selected ? 66 : 48
   const r = w / 2 - 3
-  const glyph = renderToStaticMarkup(
+  const glyph = toMarkup(
     createElement(iconFor(iconName), { color: '#ffffff', size: selected ? 22 : 17, strokeWidth: 2.3 }),
   )
   const cx = w / 2

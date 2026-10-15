@@ -174,13 +174,13 @@ export default function App() {
 
   const viewKey = b.view.name + ('id' in b.view ? b.view.id : '')
   const animated = (
-    <AnimatePresence mode="popLayout" initial={false}>
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={viewKey}
         initial={reducedMotion ? false : { opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        exit={{ opacity: 0, transition: { duration: 0.06 } }}
+        transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
       >
         {content}
       </motion.div>
