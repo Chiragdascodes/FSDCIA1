@@ -21,6 +21,11 @@ Beacon helps people who are new to a city find the nearest pharmacy, ATM, hospit
   <img src="docs/screenshots/08-navigation.jpg" width="24%" />
 </p>
 
+<p align="center">
+  <img src="docs/screenshots/10-desktop-landing.png" width="49%" />
+  <img src="docs/screenshots/11-desktop-results.png" width="49%" />
+</p>
+
 ## Why I built it
 
 I tested openstreetmap.org and found that "pharmacy near me" returned results from Italy, "MG Road" landed in the wrong city, results had no distance or open status, and a place page had no directions button. Screenshots are in [docs/evidence](docs/evidence).
