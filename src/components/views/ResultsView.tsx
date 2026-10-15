@@ -76,7 +76,7 @@ export default function ResultsView({ b }: { b: Beacon }) {
       />
 
       {showFilters && (
-        <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-3" role="toolbar" aria-label="Filters">
+        <div className="flex flex-wrap gap-2 px-4 pb-3" role="toolbar" aria-label="Filters">
           <FilterChip on={b.filters.openNow} onToggle={() => setFilter('openNow', !b.filters.openNow)} icon={<Clock className="size-3.5" />}>
             Open now
           </FilterChip>

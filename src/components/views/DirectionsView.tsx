@@ -12,6 +12,7 @@ import {
 import { formatDistance } from '../../js/geo.js'
 import type { Beacon } from '../../state/useBeacon'
 import type { RouteStep } from '../../types'
+import { PrimaryButton } from '../../ui/Glass'
 import { EmptyState, PillButton, SkeletonRows } from '../common'
 
 function StepIcon({ step }: { step: RouteStep }) {
@@ -28,13 +29,16 @@ function StepIcon({ step }: { step: RouteStep }) {
 }
 
 /** Turn-by-turn steps (the route summary lives in the RouteCard at the top). */
-export default function DirectionsView({ b, id }: { b: Beacon; id: string }) {
+export default function DirectionsView({ b, id, onStart }: { b: Beacon; id: string; onStart(): void }) {
   const units = b.settings.units
   const r = b.route
   const arrival = r ? new Date(Date.now() + r.duration * 1000) : null
 
   return (
     <div className="px-4 pb-8">
+      <PrimaryButton className="mb-4 w-full" disabled={b.routeStatus !== 'done'} onClick={onStart}>
+        <NavigationArrow size={20} weight="fill" /> Start
+      </PrimaryButton>
       <h2 className="font-display pt-1 text-[19px] font-bold">Steps</h2>
       {r && (
         <p className="label-2 mb-2 text-[13.5px]">

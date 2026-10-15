@@ -321,7 +321,7 @@ export default function PlaceView({ b, id, compact }: { b: Beacon; id: string; c
         <h3 id="nearby-title" className="label-3 mb-2 text-[12px] font-semibold tracking-wide uppercase">
           Also near here
         </h3>
-        <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1">
+        <div className="flex flex-wrap gap-2">
           {CATEGORIES.filter((c) => c.id !== place.categoryId)
             .slice(0, 6)
             .map((c) => {

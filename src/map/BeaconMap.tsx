@@ -26,6 +26,31 @@ export interface BeaconMapHandle {
   showWholeGlobe(): void
   /** Leave the landing view: un-tilt and fly to the app's starting point. */
   enterApp(lat: number, lon: number): void
+  /** Navigation: move the follow-camera (called every animation frame). */
+  navFrame(lon: number, lat: number, heading: number, zoom: number, pitch: number): void
+  /** Navigation: show/move/hide the direction marker (style depends on travel mode). */
+  navMarker(pos: { lon: number; lat: number } | null, heading: number, mode: 'foot' | 'bike' | 'car'): void
+  /** Navigation finished: flatten the camera again. */
+  exitNav(): void
+}
+
+/** Direction marker per travel mode: chevron for car/bike, dot + heading beam when walking. */
+function navMarkerElement(mode: 'foot' | 'bike' | 'car'): HTMLElement {
+  const el = document.createElement('div')
+  el.setAttribute('role', 'img')
+  el.setAttribute('aria-label', 'You (navigating)')
+  if (mode === 'foot') {
+    el.innerHTML = `<svg width="64" height="64" viewBox="0 0 64 64" style="overflow:visible">
+      <defs><radialGradient id="beam" cx="50%" cy="100%" r="100%"><stop offset="0" stop-color="#2f6fdf" stop-opacity=".55"/><stop offset="1" stop-color="#2f6fdf" stop-opacity="0"/></radialGradient></defs>
+      <path d="M32 32 L14 2 A34 34 0 0 1 50 2 Z" fill="url(#beam)"/>
+      <circle cx="32" cy="32" r="11" fill="#2f6fdf" stroke="#fff" stroke-width="4"/></svg>`
+  } else {
+    const size = mode === 'car' ? 54 : 44
+    el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 48 48" style="filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))">
+      <circle cx="24" cy="24" r="22" fill="#fff"/>
+      <path d="M24 7 L37 37 L24 30 L11 37 Z" fill="#2f6fdf" stroke="#2459c0" stroke-width="1.5" stroke-linejoin="round"/></svg>`
+  }
+  return el
 }
 
 interface Props {
@@ -103,6 +128,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
   const spinning = useRef(true)
   const programmaticMove = useRef(false)
   const handlersAttached = useRef(false)
+  const navMarkerRef = useRef<{ marker: maplibre.Marker; mode: 'foot' | 'bike' | 'car' } | null>(null)
 
   // ---- create the map once -------------------------------------------------
   useEffect(() => {
@@ -438,9 +464,17 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
   }, [props.selectedId])
 
   useEffect(() => {
-    const src = mapRef.current?.getSource(SRC_ROUTE) as GeoJSONSource | undefined
+    const map = mapRef.current
+    const src = map?.getSource(SRC_ROUTE) as GeoJSONSource | undefined
     src?.setData(routeToGeoJSON(props.route))
-  }, [props.route])
+    // Google-style: walking routes are dotted, cycling/driving solid.
+    if (map?.getLayer('route-line') && !props.landing) {
+      const walking = props.route?.mode === 'foot'
+      map.setPaintProperty('route-line', 'line-dasharray', walking ? [0.01, 1.9] : [1, 0])
+      map.setLayoutProperty('route-line', 'line-cap', 'round')
+      map.setPaintProperty('route-casing', 'line-opacity', walking ? 0 : 1)
+    }
+  }, [props.route, props.landing])
 
   useEffect(() => {
     const src = mapRef.current?.getSource(SRC_RADIUS) as GeoJSONSource | undefined
@@ -615,6 +649,43 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     },
     zoom() {
       return mapRef.current?.getZoom() ?? 0
+    },
+    navFrame(lon, lat, heading, zoom, pitch) {
+      const map = mapRef.current
+      if (!map) return
+      spinning.current = false
+      programmaticMove.current = true
+      // Smoothly turn the camera towards the heading (shortest way round).
+      const current = map.getBearing()
+      const delta = ((heading - current + 540) % 360) - 180
+      map.jumpTo({ center: [lon, lat], bearing: current + delta * 0.12, zoom, pitch })
+    },
+    navMarker(pos, heading, mode) {
+      const map = mapRef.current
+      if (!map) return
+      if (!pos) {
+        navMarkerRef.current?.marker.remove()
+        navMarkerRef.current = null
+        return
+      }
+      if (!navMarkerRef.current || navMarkerRef.current.mode !== mode) {
+        navMarkerRef.current?.marker.remove()
+        const marker = new maplibre.Marker({
+          element: navMarkerElement(mode),
+          rotationAlignment: 'map',
+          pitchAlignment: 'map',
+        })
+          .setLngLat([pos.lon, pos.lat])
+          .addTo(map)
+        navMarkerRef.current = { marker, mode }
+      }
+      navMarkerRef.current.marker.setLngLat([pos.lon, pos.lat]).setRotation(heading)
+    },
+    exitNav() {
+      const map = mapRef.current
+      if (!map) return
+      programmaticMove.current = true
+      map.easeTo({ pitch: 0, bearing: 0, duration: latest.current.reducedMotion ? 0 : 800 })
     },
     enterApp(lat: number, lon: number) {
       const map = mapRef.current

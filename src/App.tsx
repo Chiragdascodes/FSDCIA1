@@ -17,6 +17,7 @@ import BottomNav, { type Tab } from './components/BottomNav'
 import RouteCard from './components/RouteCard'
 import Sheet, { type Detent } from './components/Sheet'
 import Landing from './components/Landing'
+import Navigation from './components/Navigation'
 import { OfflineBanner, SearchAreaButton, Toasts } from './components/Overlays'
 import HomeView from './components/views/HomeView'
 import ResultsView from './components/views/ResultsView'
@@ -94,6 +95,7 @@ export default function App() {
   const [detent, setDetent] = useState<Detent>('peek')
   const [searchFocused, setSearchFocused] = useState(false)
   const [vh, setVh] = useState(() => window.innerHeight)
+  const [navigating, setNavigating] = useState(false)
 
   const dark = b.settings.theme === 'dark' || (b.settings.theme === 'auto' && systemDark)
   const styleId = landing ? 'muted' : resolveStyle(b.settings.mapStyle, dark)
@@ -112,6 +114,7 @@ export default function App() {
 
   useEffect(() => {
     setDetent(DETENT_FOR[b.view.name])
+    if (b.view.name !== 'directions') setNavigating(false)
   }, [b.view])
 
   // Landing page: fetch a real walking route for the hero animation.
@@ -213,9 +216,11 @@ export default function App() {
 
   const padding = useMemo(() => {
     if (landing) return { top: Math.round(vh * 0.4), bottom: 0, left: 0, right: 0 }
+    // Navigation: keep the arrow in the lower third, like Google Maps.
+    if (navigating) return { top: Math.round(vh * 0.42), bottom: 110, left: 0, right: 0 }
     if (isDesktop) return { top: 24, bottom: 24, left: PANEL_W + 24, right: 80 }
     return { top: view.name === 'directions' ? 230 : 130, bottom: Math.min(mobileBottom, vh * 0.62) + 8, left: 12, right: 64 }
-  }, [landing, isDesktop, mobileBottom, vh, view.name])
+  }, [landing, navigating, isDesktop, mobileBottom, vh, view.name])
 
   const showRadius = (view.name === 'results' || view.name === 'place') && b.anchor && b.category
 
@@ -230,7 +235,7 @@ export default function App() {
       case 'place':
         return <PlaceView b={b} id={view.id} />
       case 'directions':
-        return <DirectionsView b={b} id={view.id} />
+        return <DirectionsView b={b} id={view.id} onStart={() => setNavigating(true)} />
       case 'report':
         return <ReportView b={b} id={view.id} />
       case 'saved':
@@ -357,7 +362,7 @@ export default function App() {
         places={mapPlaces}
         selectedId={landing ? DEMO_PHARMACY.id : b.selectedId}
         route={landing ? demoRoute : view.name === 'directions' ? b.route : null}
-        user={landing ? null : b.user}
+        user={landing || navigating ? null : b.user}
         anchor={!landing && b.anchor && b.anchor.kind !== 'me' && view.name !== 'home' ? { ...b.anchor, name: b.anchor.label } : null}
         radius={!landing && showRadius ? { lat: b.anchor!.lat, lon: b.anchor!.lon, meters: b.radius } : null}
         padding={padding}
@@ -384,7 +389,24 @@ export default function App() {
 
       <AnimatePresence>{landing && <Landing key="landing" route={demoRoute} reducedMotion={reducedMotion} onExplore={explore} />}</AnimatePresence>
 
+      {navigating && view.name === 'directions' && b.route && (
+        <Navigation
+          route={b.route}
+          mode={b.mode}
+          destination={b.placesById.get(view.id)?.name ?? 'your destination'}
+          user={b.user}
+          units={b.settings.units}
+          reducedMotion={reducedMotion}
+          mapRef={mapRef}
+          onExit={() => {
+            setNavigating(false)
+            if (b.route) window.setTimeout(() => mapRef.current?.fitRoute(b.route!), 850)
+          }}
+        />
+      )}
+
       {!landing &&
+        !navigating &&
         (isDesktop ? (
           <>
             <aside
