@@ -197,6 +197,25 @@
   }
 }
 
+/* Backdrop behind the globe: a soft sky in light mode, deep space with stars in dark mode. */
+.beacon-space {
+  background:
+    radial-gradient(ellipse at 50% 120%, #ffffff 0%, transparent 60%),
+    radial-gradient(ellipse at 50% -20%, #cfe9ff 0%, transparent 65%),
+    linear-gradient(180deg, #dcecf7 0%, #eef4f6 55%, #f4f6f5 100%);
+}
+.dark .beacon-space {
+  background:
+    radial-gradient(1px 1px at 12% 22%, rgb(255 255 255 / 0.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 78% 14%, rgb(255 255 255 / 0.55) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 64% 72%, rgb(255 255 255 / 0.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 30% 80%, rgb(255 255 255 / 0.45) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 58%, rgb(255 255 255 / 0.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 42% 9%, rgb(255 255 255 / 0.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 6% 64%, rgb(255 255 255 / 0.4) 50%, transparent 51%),
+    radial-gradient(ellipse at 50% 50%, #0d1a2b 0%, #05070d 70%);
+}
+
 /* User location dot on the map. */
 .user-dot {
   width: 18px;
