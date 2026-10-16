@@ -1,9 +1,10 @@
 // Beacon service worker — makes the app shell load offline.
 // Strategy:
-//  - App files (same origin): stale-while-revalidate, so the app opens instantly and updates quietly.
+//  - Pages (navigations): network first, so a new deploy shows up on the next load; cache when offline.
+//  - Other app files (hashed assets): cache first after the first fetch.
 //  - Map tiles / fonts: cache-first with a size cap, so recently viewed areas still render offline.
 //  - Search, routing and geocoding APIs: always network (live data must never be stale).
-const VERSION = 'beacon-v1'
+const VERSION = 'beacon-v2'
 const SHELL = `${VERSION}-shell`
 const TILES = `${VERSION}-tiles`
 const MAX_TILES = 400
@@ -57,14 +58,20 @@ self.addEventListener('fetch', (event) => {
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.open(SHELL).then(async (cache) => {
-        const hit = await cache.match(request, { ignoreSearch: request.mode === 'navigate' })
-        const network = fetch(request)
-          .then((res) => {
-            if (res.ok) cache.put(request, res.clone())
+        if (request.mode === 'navigate') {
+          try {
+            const res = await fetch(request, { cache: 'no-cache' })
+            if (res.ok) cache.put('./index.html', res.clone())
             return res
-          })
-          .catch(() => hit || cache.match('./index.html'))
-        return hit || network
+          } catch {
+            return (await cache.match(request, { ignoreSearch: true })) || cache.match('./index.html')
+          }
+        }
+        const hit = await cache.match(request)
+        if (hit) return hit
+        const res = await fetch(request)
+        if (res.ok) cache.put(request, res.clone())
+        return res
       }),
     )
   }
