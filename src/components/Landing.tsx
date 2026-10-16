@@ -142,41 +142,59 @@ export default function Landing({ route, reducedMotion, onExplore }: Props) {
               animate: { opacity: 1, y: 0, scale: 1 },
               transition: { duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] as const },
             })}
-        className="pointer-events-auto absolute right-[5%] bottom-[10%] hidden w-[270px] md:block lg:right-[10%]"
+        className="pointer-events-auto absolute right-[5%] bottom-[11%] hidden w-[300px] md:block lg:right-[9%]"
       >
-        <Glass variant="strong" className="rounded-[22px] p-4">
-          <p className="text-[13px] font-semibold text-[#14161c]">Your trip</p>
-          <p className="text-[11px] text-[#7a8090]">to the nearest pharmacy</p>
-          <div className="mt-2 flex items-end justify-between gap-2">
-            <div>
-              <p className="text-[11px] text-[#7a8090]">Arriving in</p>
-              <p className="font-display text-[30px] leading-none font-bold text-[#14161c]">
+        {/* Trip card from the Figma design: title, ETA, large car, three-step progress. */}
+        <div
+          className="rounded-[26px] bg-white/85 p-5 shadow-[0_34px_60px_-26px_rgba(20,30,60,0.5),0_12px_24px_-14px_rgba(20,30,60,0.25)] ring-1 ring-white/80 backdrop-blur-2xl"
+          style={{ transform: 'perspective(1000px) rotateY(-9deg) rotateX(5deg)' }}
+        >
+          <p className="text-[15px] font-semibold text-[#14161c]">Your trip</p>
+          <div className="relative mt-3 flex items-end justify-between">
+            <div className="relative z-10">
+              <p className="text-[12px] text-[#7a8090]">Arriving in</p>
+              <p className="font-display mt-1 text-[38px] leading-none font-bold text-[#14161c] tabular-nums">
                 {minutes.replace(' min', '')}
-                <span className="ml-1 text-[12px] font-medium text-[#7a8090]">min</span>
+                <span className="ml-1.5 text-[14px] font-medium text-[#7a8090]">min</span>
               </p>
             </div>
             <img
-              src={`${import.meta.env.BASE_URL}landing/car.webp`}
-              alt="3D car"
-              className="-mr-3 -mb-2 w-[150px] drop-shadow-[0_14px_14px_rgba(30,50,90,0.25)]"
+              src={`${import.meta.env.BASE_URL}landing/car.png`}
+              onError={(e) => {
+                const img = e.currentTarget
+                if (!img.src.endsWith('car.webp')) img.src = `${import.meta.env.BASE_URL}landing/car.webp`
+              }}
+              alt="Car"
               draggable={false}
+              className="-mt-6 -mr-6 w-[200px] max-w-none drop-shadow-[0_18px_16px_rgba(20,30,60,0.28)]"
             />
           </div>
-          <p className="mt-2 text-[12px] font-semibold text-emerald-600">● Open now · closes 23:00</p>
-          <div className="relative mt-4 h-1.5 rounded-full bg-[#e8ebf1]">
+
+          {/* three-step progress: Found → On the way → Arriving */}
+          <div className="relative mt-5 h-4">
+            <div className="absolute inset-x-1 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-[#e2e6ee]" />
             <motion.div
-              className="absolute inset-y-0 left-0 rounded-full bg-[#14161c]"
-              initial={{ width: '8%' }}
-              animate={reducedMotion ? { width: '55%' } : { width: ['8%', '55%', '96%'] }}
+              className="absolute top-1/2 left-1 h-[3px] -translate-y-1/2 rounded-full bg-[#14161c]"
+              animate={reducedMotion ? { width: '50%' } : { width: ['0%', '98%'] }}
               transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
             />
+            {['0%', '50%', '100%'].map((left, i) => (
+              <span
+                key={left}
+                className={cx(
+                  'absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] bg-white',
+                  i === 1 ? 'border-[#14161c]' : 'border-[#c8cfda]',
+                )}
+                style={{ left: `calc(${left} * 0.96 + 2%)` }}
+              />
+            ))}
           </div>
-          <div className="mt-1.5 flex justify-between text-[10px] text-[#7a8090]">
+          <div className="mt-1.5 flex justify-between text-[11px] text-[#7a8090]">
             <span>Found</span>
-            <span>On the way</span>
-            <span>Arrived</span>
+            <span className="font-medium text-[#14161c]">On the way</span>
+            <span>Arriving</span>
           </div>
-        </Glass>
+        </div>
       </motion.div>
 
       {/* Info popovers for the nav items (keeps it a single screen) */}
