@@ -111,7 +111,7 @@ export default function App() {
     }
   }, [])
   useEffect(() => {
-    new Image().src = `${import.meta.env.BASE_URL}landing/car.webp`
+    new Image().src = `${import.meta.env.BASE_URL}landing/car.svg`
   }, [])
   const showSplash = !splashTimedOut && !(mapIdle && minTimePassed)
   // Height of the floating top bar on phones, so the bottom sheet can stop just below it.

@@ -159,14 +159,10 @@ export default function Landing({ route, reducedMotion, onExplore }: Props) {
               </p>
             </div>
             <img
-              src={`${import.meta.env.BASE_URL}landing/car.png`}
-              onError={(e) => {
-                const img = e.currentTarget
-                if (!img.src.endsWith('car.webp')) img.src = `${import.meta.env.BASE_URL}landing/car.webp`
-              }}
+              src={`${import.meta.env.BASE_URL}landing/car.svg`}
               alt="Car"
               draggable={false}
-              className="-mt-6 -mr-6 w-[200px] max-w-none drop-shadow-[0_18px_16px_rgba(20,30,60,0.28)]"
+              className="-mt-4 -mr-5 w-[190px] max-w-none drop-shadow-[0_10px_10px_rgba(20,30,60,0.18)]"
             />
           </div>
 
