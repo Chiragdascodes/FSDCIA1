@@ -110,15 +110,10 @@ export default function App() {
       window.clearTimeout(b2)
     }
   }, [])
-  // The landing hero is a pre-rendered image, so on the landing page we wait for it instead of map tiles.
-  const [heroLoaded, setHeroLoaded] = useState(false)
   useEffect(() => {
-    const img = new Image()
-    img.onload = img.onerror = () => setHeroLoaded(true)
-    img.src = `${import.meta.env.BASE_URL}landing/city.webp`
     new Image().src = `${import.meta.env.BASE_URL}landing/car.webp`
   }, [])
-  const showSplash = !splashTimedOut && !((landing ? heroLoaded : mapIdle) && minTimePassed)
+  const showSplash = !splashTimedOut && !(mapIdle && minTimePassed)
   // Height of the floating top bar on phones, so the bottom sheet can stop just below it.
   const headerRef = useRef<HTMLElement>(null)
   const [headerH, setHeaderH] = useState(130)

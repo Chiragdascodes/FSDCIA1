@@ -64,24 +64,12 @@ export default function Landing({ route, reducedMotion, onExplore }: Props) {
 
   return (
     <motion.div
-      className="absolute inset-0 z-40 flex h-dvh flex-col overflow-hidden bg-[radial-gradient(120%_80%_at_50%_0%,#ffffff_0%,#f4f6fa_55%,#e9eef6_100%)]"
+      className="pointer-events-none absolute inset-0 z-40 flex h-dvh flex-col overflow-hidden"
       exit={{ opacity: 0, transition: { duration: 0.6 } }}
     >
-      {/* 3D city rendered in Blender (design/beacon-city.blend), floating slowly */}
-      <motion.img
-        src={`${import.meta.env.BASE_URL}landing/city.webp`}
-        alt="Illustrated 3D city with a walking route to a pharmacy"
-        draggable={false}
-        className="pointer-events-none absolute top-[50vh] left-1/2 w-[175vw] max-w-none -translate-x-[52%] select-none md:top-[38vh] md:w-[min(1600px,112vw)]"
-        initial={reducedMotion ? false : { opacity: 0, y: 40 }}
-        animate={reducedMotion ? { opacity: 1 } : { opacity: 1, y: [0, -10, 0] }}
-        transition={
-          reducedMotion
-            ? { duration: 0 }
-            : { opacity: { duration: 1.2 }, y: { duration: 9, repeat: Infinity, ease: 'easeInOut' } }
-        }
-      />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[44%] bg-gradient-to-b from-[#f9fafc] via-[#f9fafc]/70 to-transparent" />
+      {/* Live 3D map of Bengaluru fills the lower half; the page fades into it from the top. */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,#f6f8fb_0%,#f6f8fb_36%,rgba(246,248,251,0.82)_48%,rgba(246,248,251,0)_70%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-gradient-to-t from-[#f6f8fb]/70 to-transparent" />
 
       {/* Header */}
       <header className="pointer-events-auto relative flex items-center justify-between px-5 pt-5 md:px-12 md:pt-8">

@@ -79,7 +79,7 @@ interface Props {
 }
 
 /** Camera for the landing page: Church Street / MG Road, Bengaluru, tilted like an isometric city. */
-export const LANDING_VIEW = { center: [77.6059, 12.9736] as [number, number], zoom: 16.5, pitch: 64, bearing: -28 }
+export const LANDING_VIEW = { center: [77.6059, 12.9742] as [number, number], zoom: 16.15, pitch: 63, bearing: -28 }
 
 const HANDLERS = ['scrollZoom', 'boxZoom', 'dragRotate', 'dragPan', 'keyboard', 'doubleClickZoom', 'touchZoomRotate'] as const
 
@@ -266,9 +266,9 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
     if (p.styleId === 'muted') {
       const tint: [string, string, string][] = [
         ['background', 'background-color', '#eef1f5'],
-        ['park', 'fill-color', '#d3ecc4'],
-        ['landcover_wood', 'fill-color', '#dcefd0'],
-        ['water', 'fill-color', '#b3d7f5'],
+        ['park', 'fill-color', '#b9dda3'],
+        ['landcover_wood', 'fill-color', '#c4e2b0'],
+        ['water', 'fill-color', '#8ec3ea'],
         ['landuse_residential', 'fill-color', '#e8ecf1'],
         ['building', 'fill-color', '#e1e6ec'],
       ]
@@ -290,12 +290,28 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
           'source-layer': 'building',
           minzoom: 14.5,
           paint: {
+            // Realistic facade tones: towers read as glass, others vary between concrete, sand and stone
+            // (picked from the feature id so neighbouring buildings differ).
             'fill-extrusion-color': darkStyle
               ? '#2a3140'
-              : ['interpolate', ['linear'], ['coalesce', ['get', 'render_height'], 8], 0, '#ffffff', 40, '#eef2f8', 120, '#dfe6f1'],
+              : [
+                  'case',
+                  ['>', ['coalesce', ['get', 'render_height'], 0], 45],
+                  ['match', ['%', ['to-number', ['id'], 0], 3], 0, '#b8c9da', 1, '#c8d5e2', '#aabfd3'],
+                  [
+                    'match',
+                    ['%', ['to-number', ['id'], 0], 6],
+                    0, '#f3f0ea',
+                    1, '#e7eaee',
+                    2, '#f8f7f4',
+                    3, '#e8e2d9',
+                    4, '#eef0f3',
+                    '#dfe4ea',
+                  ],
+                ],
             'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 14.5, 0, 15.5, ['coalesce', ['get', 'render_height'], 8]],
             'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
-            'fill-extrusion-opacity': 0.92,
+            'fill-extrusion-opacity': 0.96,
             'fill-extrusion-vertical-gradient': true,
           },
         },
@@ -313,7 +329,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
           'source-layer': 'park',
           minzoom: 14,
           paint: {
-            'fill-extrusion-color': darkStyle ? '#24402c' : '#c9e8b8',
+            'fill-extrusion-color': darkStyle ? '#24402c' : '#9fcd85',
             'fill-extrusion-height': 2.5,
             'fill-extrusion-opacity': 0.9,
           },
@@ -322,7 +338,7 @@ const BeaconMap = forwardRef<BeaconMapHandle, Props>(function BeaconMap(props, r
       )
     }
     try {
-      map.setLight({ anchor: 'viewport', color: '#ffffff', intensity: darkStyle ? 0.25 : 0.4, position: [1.3, 210, 40] })
+      map.setLight({ anchor: 'map', color: '#ffffff', intensity: darkStyle ? 0.3 : 0.5, position: [1.2, 205, 50] })
     } catch {
       /* lighting is decorative */
     }
