@@ -175,10 +175,9 @@ export default function Navigation({ route, mode, destination, user, units, redu
             <p className="font-display text-[26px] leading-none font-bold text-emerald-600 tabular-nums">
               {prog.arrived ? 'Arrived' : formatDuration(prog.remainingSeconds)}
             </p>
-            <p className="label-2 mt-1 flex items-center gap-1.5 text-[14px] tabular-nums">
-              <ModeIcon size={16} weight="fill" className="text-accent-600" />
-              {MODE_LABEL[mode]} · {formatDistance(prog.remaining, units)} ·{' '}
-              {arrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            <p className="label-2 mt-1 flex items-center gap-1.5 text-[13.5px] whitespace-nowrap tabular-nums">
+              <ModeIcon size={16} weight="fill" className="shrink-0 text-accent-600" aria-label={MODE_LABEL[mode]} />
+              {formatDistance(prog.remaining, units)} · {arrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </p>
           </div>
           {!live && !prog.arrived && (

@@ -112,7 +112,7 @@ export default function Landing({ route, reducedMotion, onExplore }: Props) {
       <section className="pointer-events-auto relative mx-auto mt-[7vh] flex max-w-[880px] flex-col items-center px-6 text-center md:mt-[8vh]">
         <motion.h1
           {...fade(0.05)}
-          className="font-display text-[40px] leading-[1.05] font-bold tracking-[-0.035em] text-[#14161c] sm:text-[56px] md:text-[72px]"
+          className="font-display text-[clamp(28px,8.4vw,40px)] leading-[1.08] font-bold tracking-[-0.035em] text-balance whitespace-nowrap text-[#14161c] sm:text-[56px] md:text-[72px]"
         >
           Find what you need,
           <br />

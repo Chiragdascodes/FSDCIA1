@@ -226,6 +226,11 @@ export default function App() {
 
   const mapPlaces = useMemo(() => {
     if (landing) return [DEMO_PHARMACY]
+    // While navigating, only the destination stays on the map.
+    if (navigating && b.view.name === 'directions') {
+      const dest = b.placesById.get(b.view.id)
+      return dest ? [dest] : []
+    }
     if (b.view.name === 'disambiguate') return b.anchorOptions.map((p) => ({ ...p, categoryId: null }))
     const list = b.visibleResults.map((r) => r.place)
     if (b.selectedId && !list.some((p) => p.id === b.selectedId)) {
@@ -233,7 +238,7 @@ export default function App() {
       if (sel) list.push(sel)
     }
     return list
-  }, [landing, b.visibleResults, b.selectedId, b.placesById, b.view.name, b.anchorOptions])
+  }, [landing, navigating, b.visibleResults, b.selectedId, b.placesById, b.view, b.anchorOptions])
 
   const view = b.view
   const showNav = NAV_VIEWS.includes(view.name)
